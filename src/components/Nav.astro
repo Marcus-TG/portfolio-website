@@ -1,0 +1,30 @@
+---
+const links = [
+  { id: 'home',     label: 'Home'     },
+  { id: 'projects', label: 'Projects' },
+  { id: 'about',    label: 'About'    },
+{ id: 'contact',  label: 'Contact'  },
+];
+---
+
+<nav id="sidebar" class="fixed top-0 left-0 h-full w-44 flex flex-col justify-center px-8 z-10">
+  <ul class="flex flex-col gap-6 list-none m-0 p-0">
+    {links.map(link => (
+      <li>
+        <a
+          href={`#${link.id}`}
+          class="nav-link block text-sm tracking-widest uppercase text-text-primary transition-colors duration-200 hover:text-accent-tertiary"
+          data-section={link.id}
+        >
+          {link.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .nav-link.active {
+    color: var(--color-accent-primary);
+  }
+</style>
