@@ -19,11 +19,14 @@ const sections = ['home', 'projects', 'about', 'contact'];
     <!-- Persistent background layer — Three.js canvas will be mounted here -->
     <div id="background" class="fixed inset-0 bg-background -z-10"></div>
 
+    <!-- Page frame — decorative border inset from all four edges -->
+    <div id="page-frame" class="fixed inset-12 border border-text-primary pointer-events-none z-50"></div>
+
     <!-- Sidebar navigation -->
     <Nav />
 
     <!-- Content area — sections swap here -->
-    <main id="content-area" class="fixed inset-0 ml-44">
+    <main id="content-area" class="fixed top-5 right-5 bottom-5 left-[196px]">
       {sections.map(id => (
         <section
           id={id}
