@@ -3,11 +3,19 @@ const links = [
   { id: 'home',     label: 'Home'     },
   { id: 'projects', label: 'Projects' },
   { id: 'about',    label: 'About'    },
-{ id: 'contact',  label: 'Contact'  },
+  { id: 'contact',  label: 'Contact'  },
 ];
 ---
 
-<nav id="sidebar" class="fixed top-0 left-0 h-full w-44 flex flex-col justify-center px-8 z-10">
+<nav id="sidebar" class="fixed top-0 left-0 h-full w-44 flex flex-col pt-16 px-8 z-10">
+
+  <!-- Identity -->
+  <div class="mb-10">
+    <p class="text-text-primary text-5xl font-semibold tracking-wide whitespace-nowrap">Marcus Strauss</p>
+    <p id="job-title" class="text-text-primary/50 text-base tracking-widest uppercase mt-2 whitespace-nowrap">Systems Administrator</p>
+  </div>
+
+  <!-- Navigation -->
   <ul class="flex flex-col gap-6 list-none m-0 p-0">
     {links.map(link => (
       <li>
@@ -21,6 +29,7 @@ const links = [
       </li>
     ))}
   </ul>
+
 </nav>
 
 <style>
