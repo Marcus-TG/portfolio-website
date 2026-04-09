@@ -27,7 +27,21 @@ const sections = ['home', 'projects', 'about', 'contact'];
 
     <!-- Content area — sections swap here -->
     <main id="content-area" class="fixed top-5 right-5 bottom-5 left-[196px]">
-      {sections.map(id => (
+
+      <!-- Home -->
+      <section
+        id="home"
+        class="section absolute inset-0 opacity-0 pointer-events-none"
+      >
+        <p class="absolute bottom-12 right-12 text-base tracking-wide text-text-primary text-right">
+          I got into this because complex things didn't have to be.<br>
+          I believe a solution you can repeat is worth more than one you can't explain.<br>
+          I build for the next person — even when that person is me.
+        </p>
+      </section>
+
+      <!-- Other sections -->
+      {sections.filter(id => id !== 'home').map(id => (
         <section
           id={id}
           class="section absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none"
