@@ -43,7 +43,7 @@ const sections = ['home', 'projects', 'about', 'contact'];
 </html>
 
 <script>
-  import { initBackground } from '../lib/background.js';
+  import { BackgroundScene } from '../background/BackgroundScene.js';
   import gsap from 'gsap';
 
   const DURATION = 0.4;
@@ -85,7 +85,7 @@ const sections = ['home', 'projects', 'about', 'contact'];
 
   // Background
   const bgContainer = document.getElementById('background')!;
-  initBackground(bgContainer);
+  new BackgroundScene(bgContainer);
 
   // Initial render — no animation, just show the right section
   function init(): void {
