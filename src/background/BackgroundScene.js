@@ -16,8 +16,6 @@ export class BackgroundScene {
       sphereOffsetY:      0.0,
       lightAngle:         2.5,
       lightConcentration: 2.0,
-      grainDensity:       1.0,
-      grainBrightness:    0.4,
       grainSpeed:         1.0,
       maxBrightness:      0.3,
       baseBrightness:     0.055, // matches #0e0e0e
@@ -81,8 +79,6 @@ export class BackgroundScene {
       uSphereOffsetY:     { value: this.params.sphereOffsetY },
       uLightAngle:        { value: this.params.lightAngle },
       uLightConcentration:{ value: this.params.lightConcentration },
-      uGrainDensity:      { value: this.params.grainDensity },
-      uGrainBrightness:   { value: this.params.grainBrightness },
       uGrainSpeed:        { value: this.params.grainSpeed },
       uMaxBrightness:     { value: this.params.maxBrightness },
       uBaseBrightness:    { value: this.params.baseBrightness },
@@ -146,8 +142,6 @@ export class BackgroundScene {
     this.uniforms.uSphereOffsetY.value     = p.sphereOffsetY;
     this.uniforms.uLightAngle.value        = p.lightAngle;
     this.uniforms.uLightConcentration.value= p.lightConcentration;
-    this.uniforms.uGrainDensity.value      = p.grainDensity;
-    this.uniforms.uGrainBrightness.value   = p.grainBrightness;
     this.uniforms.uGrainSpeed.value        = p.grainSpeed;
     this.uniforms.uMaxBrightness.value     = p.maxBrightness;
     this.uniforms.uBaseBrightness.value    = p.baseBrightness;
@@ -181,9 +175,7 @@ export class BackgroundScene {
     fLight.addBinding(p, 'lightConcentration', { min: 1.0, max: 5.0,       step: 0.1,  label: 'concentration' });
 
     const fGrain = pane.addFolder({ title: 'Grain' });
-    fGrain.addBinding(p, 'grainDensity',    { min: 0.1, max: 2.0, step: 0.05, label: 'density' });
-    fGrain.addBinding(p, 'grainBrightness', { min: 0.1, max: 1.0, step: 0.05, label: 'brightness' });
-    fGrain.addBinding(p, 'grainSpeed',      { min: 0.01, max: 2.0, step: 0.01, label: 'speed' });
+    fGrain.addBinding(p, 'grainSpeed', { min: 0.01, max: 2.0, step: 0.01, label: 'speed' });
 
     const fOutput = pane.addFolder({ title: 'Output' });
     fOutput.addBinding(p, 'maxBrightness',  { min: 0.1, max: 0.5, step: 0.01,  label: 'maxBrightness' });

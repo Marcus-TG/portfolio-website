@@ -11,8 +11,6 @@ uniform float uSphereOffsetY;
 uniform float uLightAngle;
 uniform float uLightConcentration;
 uniform sampler2D uGrainTexture;
-uniform float uGrainDensity;
-uniform float uGrainBrightness;
 uniform float uGrainSpeed;
 uniform float uMaxBrightness;
 uniform float uBaseBrightness;
@@ -52,25 +50,34 @@ void main() {
   float light = 1.0 - smoothstep(0.0, uSphereRadius * 1.8, length(lightDiff));
   light = pow(light, uLightConcentration);
 
-  // --- sphere brightness (smooth base layer) ---
+  // --- sphere brightness envelope ---
   float sphereBrightness = circle * n * light;
-  float base = sphereBrightness * uMaxBrightness;
 
-  // --- grain via texture (no sin-hash artifacts) ---
-  // Quantize time so grain holds position, then jumps — like film frames
-  float grainTime = floor(uTime * uGrainSpeed * 30.0) / 30.0;
-  vec2 grainOffset = vec2(
-    fract(sin(grainTime * 12.9898) * 43758.5453),
-    fract(cos(grainTime * 78.233) * 43758.5453)
+  // --- continuous grain with smooth transitions ---
+  float grainRate = uGrainSpeed * 2.0;
+  float grainPhase = uTime * grainRate;
+  float grainMix = fract(grainPhase);
+  float grainStep = floor(grainPhase);
+
+  vec2 offsetA = vec2(
+    fract(sin(grainStep * 12.9898) * 43758.5453),
+    fract(cos(grainStep * 78.233) * 43758.5453)
   );
-  vec2 grainUV = gl_FragCoord.xy / 512.0 + grainOffset;
-  float rand = texture2D(uGrainTexture, grainUV).r;
+  vec2 offsetB = vec2(
+    fract(sin((grainStep + 1.0) * 12.9898) * 43758.5453),
+    fract(cos((grainStep + 1.0) * 78.233) * 43758.5453)
+  );
 
-  float speck = step(1.0 - sphereBrightness * uGrainDensity * 0.3, rand);
-  float grain = speck * uGrainBrightness * sphereBrightness;
+  float randA = texture2D(uGrainTexture, gl_FragCoord.xy / 512.0 + offsetA).r;
+  float randB = texture2D(uGrainTexture, gl_FragCoord.xy / 512.0 + offsetB).r;
 
-  // --- final composite: smooth sphere + grain specks + ambient floor ---
-  vec3 color = vec3(uBaseBrightness + base + grain);
+  float rand = mix(randA, randB, smoothstep(0.0, 1.0, grainMix));
+
+  // Grain IS the rendering — random texture modulates the brightness envelope
+  float grain = rand * sphereBrightness;
+
+  // --- final composite ---
+  vec3 color = vec3(uBaseBrightness + grain * uMaxBrightness);
   color = clamp(color, 0.0, 1.0);
   gl_FragColor = vec4(color, 1.0);
 }
