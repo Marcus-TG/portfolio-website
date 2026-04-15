@@ -42,12 +42,12 @@ void main() {
   n += 0.125 * snoise(vec3(uv * scale * 12.0, uTime * speed * 3.0));
   n = n * 0.5 + 0.5; // remap to ~[0,1]
 
-  // --- directional light gradient ---
-  vec2  lightDir = normalize(vec2(cos(uLightAngle), sin(uLightAngle)));
-  float light    = length(diff) > 0.001
-                     ? dot(normalize(diff), lightDir)
-                     : 0.0;
-  light = light * 0.5 + 0.5;
+  // --- offset radial light gradient ---
+  vec2  lightOffset = vec2(cos(uLightAngle), sin(uLightAngle)) * 0.15;
+  vec2  lightCenter = center + lightOffset;
+  vec2  lightDiff   = uv - lightCenter;
+  lightDiff.x *= aspect;
+  float light = 1.0 - smoothstep(0.0, uSphereRadius * 1.8, length(lightDiff));
   light = pow(light, uLightConcentration);
 
   // --- compose brightness ---
