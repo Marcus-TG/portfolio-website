@@ -152,7 +152,7 @@ export class BackgroundScene {
     fNoise.addBinding(p, 'noiseSpeed',  { min: 0.01, max: 0.2,  step: 0.001, label: 'speed' });
 
     const fSphere = pane.addFolder({ title: 'Sphere' });
-    fSphere.addBinding(p, 'sphereRadius',   { min: 0.2,  max: 0.5, step: 0.01, label: 'radius' });
+    fSphere.addBinding(p, 'sphereRadius',   { min: 0.2,  max: 2.0, step: 0.01, label: 'radius' });
     fSphere.addBinding(p, 'sphereSoftness', { min: 0.05, max: 0.3, step: 0.01, label: 'softness' });
     fSphere.addBinding(p, 'sphereOffsetX',  { min: -0.3, max: 0.3, step: 0.01, label: 'offsetX' });
     fSphere.addBinding(p, 'sphereOffsetY',  { min: -0.3, max: 0.3, step: 0.01, label: 'offsetY' });
