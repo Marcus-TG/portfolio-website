@@ -12,6 +12,7 @@ uniform float uLightAngle;
 uniform float uLightConcentration;
 uniform sampler2D uGrainTexture;
 uniform float uGrainSpeed;
+uniform float uGrainSize;
 uniform float uMaxBrightness;
 uniform float uBaseBrightness;
 
@@ -68,8 +69,9 @@ void main() {
     fract(cos((grainStep + 1.0) * 78.233) * 43758.5453)
   );
 
-  float randA = texture2D(uGrainTexture, gl_FragCoord.xy / 512.0 + offsetA).r;
-  float randB = texture2D(uGrainTexture, gl_FragCoord.xy / 512.0 + offsetB).r;
+  vec2 grainCoord = floor(gl_FragCoord.xy / uGrainSize) * uGrainSize / 512.0;
+  float randA = texture2D(uGrainTexture, grainCoord + offsetA).r;
+  float randB = texture2D(uGrainTexture, grainCoord + offsetB).r;
 
   float rand = mix(randA, randB, smoothstep(0.0, 1.0, grainMix));
 

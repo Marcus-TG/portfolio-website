@@ -17,6 +17,7 @@ export class BackgroundScene {
       lightAngle:         2.5,
       lightConcentration: 2.0,
       grainSpeed:         1.0,
+      grainSize:          1.0,
       maxBrightness:      0.3,
       baseBrightness:     0.055, // matches #0e0e0e
       mouseStrength:      0.35,
@@ -80,6 +81,7 @@ export class BackgroundScene {
       uLightAngle:        { value: this.params.lightAngle },
       uLightConcentration:{ value: this.params.lightConcentration },
       uGrainSpeed:        { value: this.params.grainSpeed },
+      uGrainSize:         { value: this.params.grainSize },
       uMaxBrightness:     { value: this.params.maxBrightness },
       uBaseBrightness:    { value: this.params.baseBrightness },
     };
@@ -143,6 +145,7 @@ export class BackgroundScene {
     this.uniforms.uLightAngle.value        = p.lightAngle;
     this.uniforms.uLightConcentration.value= p.lightConcentration;
     this.uniforms.uGrainSpeed.value        = p.grainSpeed;
+    this.uniforms.uGrainSize.value         = p.grainSize;
     this.uniforms.uMaxBrightness.value     = p.maxBrightness;
     this.uniforms.uBaseBrightness.value    = p.baseBrightness;
 
@@ -176,6 +179,7 @@ export class BackgroundScene {
 
     const fGrain = pane.addFolder({ title: 'Grain' });
     fGrain.addBinding(p, 'grainSpeed', { min: 0.01, max: 2.0, step: 0.01, label: 'speed' });
+    fGrain.addBinding(p, 'grainSize',  { min: 1.0,  max: 8.0, step: 0.5,  label: 'size' });
 
     const fOutput = pane.addFolder({ title: 'Output' });
     fOutput.addBinding(p, 'maxBrightness',  { min: 0.1, max: 0.5, step: 0.01,  label: 'maxBrightness' });
