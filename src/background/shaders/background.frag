@@ -59,7 +59,7 @@ void main() {
                 / (uResolution.xy / uGrainPixelSize);
   float grain   = fract(sin(dot(grainUV * uResolution.xy + uTime * 100.0,
                                 vec2(12.9898, 78.233))) * 43758.5453);
-  grain = (grain - 0.5) * uGrainIntensity;
+  grain = (grain - 0.5) * uGrainIntensity * circle;
 
   // --- final output ---
   vec3 color = vec3(brightness) + grain;
