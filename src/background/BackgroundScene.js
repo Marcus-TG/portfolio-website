@@ -8,19 +8,22 @@ export class BackgroundScene {
     this.container = container;
 
     this.params = {
-      noiseScale:         3.0,
-      noiseSpeed:         0.05,
-      sphereRadius:       0.35,
-      sphereSoftness:     0.15,
-      sphereOffsetX:      0.1,
-      sphereOffsetY:      0.0,
-      lightAngle:         2.5,
-      lightConcentration: 2.0,
-      grainSpeed:         1.0,
+      noiseScale:         0.7,
+      noiseSpeed:         0.027,
+      noiseDirection:     4.9,
+      noiseWaveSpeed:     0.08,
+      noiseWaveScale:     0.4,
+      sphereRadius:       0.83,
+      sphereSoftness:     0.05,
+      sphereOffsetX:      -0.30,
+      sphereOffsetY:      -0.30,
+      lightAngle:         0.0,
+      lightConcentration: 1.8,
+      grainSpeed:         0.2,
       grainSize:          1.0,
-      maxBrightness:      0.3,
-      baseBrightness:     0.055, // matches #0e0e0e
-      mouseStrength:      0.35,
+      maxBrightness:      0.5,
+      baseBrightness:     0.0, // matches #0e0e0e
+      mouseStrength:      1.0,
     };
 
     this._mouse     = new THREE.Vector2(0, 0);
@@ -74,6 +77,9 @@ export class BackgroundScene {
       uGrainTexture:      { value: this._grainTexture },
       uNoiseScale:        { value: this.params.noiseScale },
       uNoiseSpeed:        { value: this.params.noiseSpeed },
+      uNoiseDirection:    { value: this.params.noiseDirection },
+      uNoiseWaveSpeed:    { value: this.params.noiseWaveSpeed },
+      uNoiseWaveScale:    { value: this.params.noiseWaveScale },
       uSphereRadius:      { value: this.params.sphereRadius },
       uSphereSoftness:    { value: this.params.sphereSoftness },
       uSphereOffsetX:     { value: this.params.sphereOffsetX },
@@ -138,6 +144,9 @@ export class BackgroundScene {
     this.uniforms.uMouse.value.set(this._mouseLerp.x * s, this._mouseLerp.y * s);
     this.uniforms.uNoiseScale.value        = p.noiseScale;
     this.uniforms.uNoiseSpeed.value        = p.noiseSpeed;
+    this.uniforms.uNoiseDirection.value    = p.noiseDirection;
+    this.uniforms.uNoiseWaveSpeed.value    = p.noiseWaveSpeed;
+    this.uniforms.uNoiseWaveScale.value    = p.noiseWaveScale;
     this.uniforms.uSphereRadius.value      = p.sphereRadius;
     this.uniforms.uSphereSoftness.value    = p.sphereSoftness;
     this.uniforms.uSphereOffsetX.value     = p.sphereOffsetX;
@@ -164,8 +173,11 @@ export class BackgroundScene {
     const p = this.params;
 
     const fNoise = pane.addFolder({ title: 'Noise' });
-    fNoise.addBinding(p, 'noiseScale',  { min: 1.0,  max: 10.0, step: 0.1,   label: 'scale' });
-    fNoise.addBinding(p, 'noiseSpeed',  { min: 0.01, max: 0.2,  step: 0.001, label: 'speed' });
+    fNoise.addBinding(p, 'noiseScale',     { min: 0.1,  max: 10.0,         step: 0.1,   label: 'scale' });
+    fNoise.addBinding(p, 'noiseSpeed',     { min: 0.01, max: 0.2,          step: 0.001, label: 'speed' });
+    fNoise.addBinding(p, 'noiseDirection', { min: 0,    max: Math.PI * 2,  step: 0.05,  label: 'direction' });
+    fNoise.addBinding(p, 'noiseWaveSpeed', { min: 0.0,  max: 0.5,          step: 0.005, label: 'waveSpeed' });
+    fNoise.addBinding(p, 'noiseWaveScale', { min: 0.1,  max: 5.0,          step: 0.1,   label: 'waveStretch' });
 
     const fSphere = pane.addFolder({ title: 'Sphere' });
     fSphere.addBinding(p, 'sphereRadius',   { min: 0.2,  max: 2.0, step: 0.01, label: 'radius' });
@@ -182,7 +194,7 @@ export class BackgroundScene {
     fGrain.addBinding(p, 'grainSize',  { min: 1.0,  max: 8.0, step: 0.5,  label: 'size' });
 
     const fOutput = pane.addFolder({ title: 'Output' });
-    fOutput.addBinding(p, 'maxBrightness',  { min: 0.1, max: 0.5, step: 0.01,  label: 'maxBrightness' });
+    fOutput.addBinding(p, 'maxBrightness',  { min: 0.1, max: 1.0, step: 0.01,  label: 'maxBrightness' });
     fOutput.addBinding(p, 'baseBrightness', { min: 0.0, max: 0.1, step: 0.005, label: 'baseBrightness' });
 
     const fMouse = pane.addFolder({ title: 'Mouse' });

@@ -15,6 +15,9 @@ uniform float uGrainSpeed;
 uniform float uGrainSize;
 uniform float uMaxBrightness;
 uniform float uBaseBrightness;
+uniform float uNoiseDirection;
+uniform float uNoiseWaveSpeed;
+uniform float uNoiseWaveScale;
 
 varying vec2 vUv;
 
@@ -34,14 +37,24 @@ void main() {
   float circle = 1.0 - smoothstep(uSphereRadius - uSphereSoftness,
                                    uSphereRadius + uSphereSoftness, dist);
 
-  // --- multi-octave simplex noise ---
+  // --- directional wave noise ---
+  vec2 waveDir = vec2(cos(uNoiseDirection), sin(uNoiseDirection));
+
+  // Scroll UVs in wave direction over time
+  vec2 scrolledUV = uv + waveDir * uTime * uNoiseWaveSpeed;
+
+  // Stretch noise perpendicular to wave direction for banded/wave look
+  vec2 perpDir = vec2(-waveDir.y, waveDir.x);
+  float alongWave = dot(scrolledUV, waveDir);
+  float perpWave = dot(scrolledUV, perpDir);
+  vec2 noiseUV = waveDir * alongWave + perpDir * perpWave * uNoiseWaveScale;
+
   float scale = uNoiseScale;
-  float speed = uNoiseSpeed;
   float n = 0.0;
-  n += 0.500 * snoise(vec3(uv * scale * 3.0,  uTime * speed));
-  n += 0.250 * snoise(vec3(uv * scale * 6.0,  uTime * speed * 2.0));
-  n += 0.125 * snoise(vec3(uv * scale * 12.0, uTime * speed * 3.0));
-  n = n * 0.5 + 0.5; // remap to ~[0,1]
+  n += 0.500 * snoise(vec3(noiseUV * scale * 3.0,  uTime * uNoiseSpeed));
+  n += 0.250 * snoise(vec3(noiseUV * scale * 6.0,  uTime * uNoiseSpeed * 2.0));
+  n += 0.125 * snoise(vec3(noiseUV * scale * 12.0, uTime * uNoiseSpeed * 3.0));
+  n = n * 0.5 + 0.5;
 
   // --- offset radial light gradient ---
   vec2  lightOffset = vec2(cos(uLightAngle), sin(uLightAngle)) * 0.15;
