@@ -18,6 +18,7 @@ uniform float uBaseBrightness;
 uniform float uNoiseDirection;
 uniform float uNoiseWaveSpeed;
 uniform float uNoiseWaveScale;
+uniform float uNoiseContrast;
 
 varying vec2 vUv;
 
@@ -55,6 +56,9 @@ void main() {
   n += 0.250 * snoise(vec3(noiseUV * scale * 6.0,  uTime * uNoiseSpeed * 2.0));
   n += 0.125 * snoise(vec3(noiseUV * scale * 12.0, uTime * uNoiseSpeed * 3.0));
   n = n * 0.5 + 0.5;
+
+  // Push noise toward extremes — darks get darker, brights get brighter
+  n = pow(n, uNoiseContrast);
 
   // --- offset radial light gradient ---
   vec2  lightOffset = vec2(cos(uLightAngle), sin(uLightAngle)) * 0.15;
