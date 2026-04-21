@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
+import About from '../components/About.astro';
 
 const sections = ['home', 'projects', 'about', 'contact'];
 ---
@@ -51,8 +52,11 @@ const sections = ['home', 'projects', 'about', 'contact'];
       </p>
       </section>
 
+      <!-- About -->
+      <About />
+
       <!-- Other sections -->
-      {sections.filter(id => id !== 'home').map(id => (
+      {sections.filter(id => !['home', 'about'].includes(id)).map(id => (
         <section
           id={id}
           class="section absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none"
