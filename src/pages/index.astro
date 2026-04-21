@@ -70,6 +70,7 @@ const sections = ['home', 'projects', 'about', 'contact'];
 <script>
   import { BackgroundScene } from '../background/BackgroundScene.js';
   import gsap from 'gsap';
+  import { initTitleCycler } from '../scripts/titleCycler';
 
   const DURATION = 0.4;
 
@@ -151,4 +152,5 @@ const sections = ['home', 'projects', 'about', 'contact'];
   });
 
   init();
+  initTitleCycler();
 </script>
