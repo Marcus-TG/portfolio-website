@@ -11,18 +11,18 @@ export class BackgroundScene {
       noiseScale:         0.4,
       noiseSpeed:         0.027,
       noiseDirection:     4.9,
-      noiseWaveSpeed:     0.08,
+      noiseWaveSpeed:     0.25,
       noiseWaveScale:     0.4,
-      noiseContrast:      4.0,
+      noiseContrast:      3.0,
       sphereRadius:       0.83,
       sphereSoftness:     0.05,
       sphereOffsetX:      -0.30,
-      sphereOffsetY:      -0.30,
+      sphereOffsetY:      -0.08,
       lightAngle:         0.0,
       lightConcentration: 1.8,
       grainSpeed:         0.2,
       grainSize:          1.0,
-      maxBrightness:      4.0,
+      maxBrightness:      3.0,
       baseBrightness:     0.0, 
       mouseStrength:      1.0,
     };
@@ -195,7 +195,7 @@ export class BackgroundScene {
 
     const fGrain = pane.addFolder({ title: 'Grain' });
     fGrain.addBinding(p, 'grainSpeed', { min: 0.01, max: 2.0, step: 0.01, label: 'speed' });
-    fGrain.addBinding(p, 'grainSize',  { min: 1.0,  max: 8.0, step: 0.5,  label: 'size' });
+    fGrain.addBinding(p, 'grainSize',  { min: 0,  max: 8.0, step: 0.1,  label: 'size' });
 
     const fOutput = pane.addFolder({ title: 'Output' });
     fOutput.addBinding(p, 'maxBrightness',  { min: 0.1, max: 5.0, step: 0.01,  label: 'maxBrightness' });
