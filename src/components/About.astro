@@ -99,41 +99,63 @@ const items = [
     scroll-snap-align: center;
   }
 
-  /* Scroll-driven highlight */
-  @supports (animation-timeline: view()) {
-    .about-item {
-      animation: highlight linear both;
-      animation-timeline: view();
-      animation-range: cover calc(50% - 1lh) cover calc(50% + 1lh);
-      transition: none;
-    }
-
-    @keyframes highlight {
-      0% {
-        color: #e8e8e8;
-        opacity: 0.2;
-      }
-      50% {
-        color: #f3bf32;
-        opacity: 1;
-      }
-      100% {
-        color: #e8e8e8;
-        opacity: 0.2;
-      }
-    }
-  }
-
-  /* Fallback — no scroll-driven animation support */
-  @supports not (animation-timeline: view()) {
-    .about-item {
-      opacity: 0.85;
-      color: #e8e8e8;
-    }
-
-    .about-item:hover {
-      opacity: 1;
-      color: #f3bf32;
-    }
-  }
 </style>
+
+<script>
+  const supportsScrollDriven = CSS.supports('animation-timeline', 'view()');
+
+  if (supportsScrollDriven) {
+    // Inject scroll-driven animation CSS at runtime to bypass
+    // Lightning CSS stripping unrecognized properties
+    const sheet = document.createElement('style');
+    sheet.textContent = `
+      .about-item {
+        animation: about-highlight linear both;
+        animation-timeline: view(block);
+        animation-range: cover calc(50% - 0.5lh) cover calc(50% + 0.5lh);
+        transition: none !important;
+      }
+      @keyframes about-highlight {
+        0%   { color: #e8e8e8; opacity: 0.2; }
+        50%  { color: #f3bf32; opacity: 1; }
+        100% { color: #e8e8e8; opacity: 0.2; }
+      }
+    `;
+    document.head.appendChild(sheet);
+  } else {
+    // JS fallback for browsers without scroll-driven animations
+    const scroller = document.getElementById('about-scroll');
+    const items = document.querySelectorAll<HTMLElement>('.about-item');
+    if (scroller && items.length) {
+      function updateHighlight() {
+        const center = scroller!.clientHeight / 2;
+        let closest: HTMLElement | null = null;
+        let closestDist = Infinity;
+
+        items.forEach(item => {
+          const rect = item.getBoundingClientRect();
+          const scrollRect = scroller!.getBoundingClientRect();
+          const itemCenter = rect.top - scrollRect.top + rect.height / 2;
+          const dist = Math.abs(itemCenter - center);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closest = item;
+          }
+        });
+
+        items.forEach(item => {
+          if (item === closest) {
+            item.style.color = '#f3bf32';
+            item.style.opacity = '1';
+          } else {
+            item.style.color = '#e8e8e8';
+            item.style.opacity = '0.2';
+          }
+        });
+      }
+
+      scroller.addEventListener('scroll', updateHighlight, { passive: true });
+      updateHighlight();
+    }
+  }
+</script>
