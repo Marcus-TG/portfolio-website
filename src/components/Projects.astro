@@ -1,0 +1,135 @@
+---
+const projects = [
+  {
+    title: 'Infrastructure Stack',
+    description:
+      'A two-year evolution in self-hosted infrastructure — dual-WAN load balancing, 10Gb networking fabric, VLAN segmentation, and containerized service orchestration across two physical machines.',
+    tags: ['UniFi', 'TrueNAS', 'Docker', 'NGINX', 'Cloudflare', 'ZFS'],
+  },
+  {
+    title: 'AI Policy Assistant',
+    description:
+      'A RAG pipeline that monitors corporate documentation in real-time, vectorizes it, and surfaces accurate answers through a conversational AI interface — with zero hallucination guardrails.',
+    tags: ['Gemini', 'Pinecone', 'RAG', 'Python', 'n8n'],
+  },
+  {
+    title: 'Social Intelligence Engine',
+    description:
+      'An automated competitive intelligence pipeline that scrapes social platforms through residential proxies, runs AI sentiment analysis, and delivers structured reports on demand.',
+    tags: ['Bright Data', 'Gemini', 'Headless Browser', 'Webhooks', 'Python'],
+  },
+  {
+    title: 'Private AI Inference Server',
+    description:
+      'A self-hosted LLM inference server running open-source models on consumer GPU hardware, integrated into existing reverse proxy infrastructure and available as a local API endpoint for automation workflows.',
+    tags: ['Ollama', 'Docker', 'NGINX', 'Llama 3.1', 'n8n'],
+  },
+];
+---
+
+<section
+  id="projects"
+  class="section absolute inset-0 opacity-0 pointer-events-none"
+>
+  <div class="projects-container">
+    <h2 class="projects-label">Projects</h2>
+    <div class="projects-list">
+      {projects.map(project => (
+        <div class="project-row">
+          <div class="project-title">{project.title}</div>
+          <div class="project-description">{project.description}</div>
+          <div class="project-tags">
+            {project.tags.map(tag => (
+              <span class="project-tag">{tag}</span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .projects-container {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 8rem 3rem 3rem 3rem;
+  }
+
+  .projects-label {
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #e8e8e8;
+    opacity: 0.5;
+    margin-bottom: 1.5rem;
+  }
+
+  .projects-list {
+    border-top: 1px solid #2c2c2c;
+    border-bottom: 1px solid #2c2c2c;
+  }
+
+  .project-row {
+    display: grid;
+    grid-template-columns: 25% 45% 30%;
+    align-items: baseline;
+    padding: 1.75rem 0;
+    border-bottom: 1px solid #2c2c2c;
+    transition: background-color 0.25s ease;
+  }
+
+  .project-row:last-child {
+    border-bottom: none;
+  }
+
+  .project-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #e8e8e8;
+    letter-spacing: 0.01em;
+    padding-right: 1.5rem;
+  }
+
+  .project-description {
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: #e8e8e8;
+    opacity: 0.65;
+    line-height: 1.6;
+    padding-right: 2rem;
+    transition: opacity 0.25s ease;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    padding-left: 1rem;
+  }
+
+  .project-tag {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+      'Liberation Mono', monospace;
+    font-size: 0.7rem;
+    color: #f3bf32;
+    opacity: 0.6;
+    letter-spacing: 0.03em;
+    transition: opacity 0.25s ease;
+  }
+
+  /* Row hover — brighten description + tags */
+  .project-row:hover .project-description {
+    opacity: 1;
+  }
+
+  .project-row:hover .project-tag {
+    opacity: 1;
+  }
+</style>
