@@ -21,8 +21,11 @@ const sections = ['home', 'projects', 'about', 'contact'];
     <!-- Persistent background layer — Three.js canvas will be mounted here -->
     <div id="background" class="fixed inset-0 z-0"></div>
 
+    <!-- Scrim — subtle dark overlay for legibility over shader blooms -->
+    <div class="fixed inset-0 z-[1] pointer-events-none" style="background: rgba(14, 14, 14, 0.35)"></div>
+
     <!-- Black mask outside page frame -->
-    <div class="fixed inset-0 z-[1] pointer-events-none border-[3rem] border-black"></div>
+    <div class="fixed inset-0 z-[2] pointer-events-none border-[3rem] border-black"></div>
 
     <!-- Page frame — decorative border inset from all four edges -->
     <div id="page-frame" class="fixed inset-12 border border-text-primary pointer-events-none z-50"></div>
