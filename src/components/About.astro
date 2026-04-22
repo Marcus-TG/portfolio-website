@@ -1,0 +1,161 @@
+---
+const items = [
+  'infrastructure that scales.',
+  'systems that think.',
+  'automation pipelines.',
+  'private cloud environments.',
+  'retrieval-augmented AI systems.',
+  'distributed service architectures.',
+  'resilient networks.',
+  'event-driven workflows.',
+  'AI integration layers.',
+  'production-grade deployments.',
+  'systems that run while you sleep.',
+];
+---
+
+<section
+  id="about"
+  class="section absolute inset-0 opacity-0 pointer-events-none"
+>
+  <div class="about-scroll" id="about-scroll">
+    <div class="about-layout">
+      <div class="about-sticky">
+        <h2 class="about-heading">I build</h2>
+      </div>
+      <ul class="about-list" role="list">
+        {items.map(item => (
+          <li class="about-item">{item}</li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-scroll {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-snap-type: y proximity;
+    container-type: size;
+  }
+
+  .about-layout {
+    display: flex;
+    align-items: flex-start;
+    min-height: 100%;
+    padding-inline: clamp(2rem, 5vw, 6rem);
+    gap: 0.4em;
+  }
+
+  .about-sticky {
+    position: sticky;
+    top: 0;
+    height: 100cqh;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .about-heading {
+    font-size: clamp(2.5rem, 5vw + 1rem, 5rem);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    color: #e8e8e8;
+    background: linear-gradient(
+      to bottom,
+      #e8e8e8 40%,
+      rgba(232, 232, 232, 0.3)
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    white-space: nowrap;
+  }
+
+  .about-list {
+    list-style: none;
+    margin: 0;
+    font-size: clamp(2.5rem, 5vw + 1rem, 5rem);
+    line-height: 1.2;
+    padding-block: calc(50vh - 0.6em);
+    padding-inline: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25lh;
+  }
+
+  .about-item {
+    font-size: inherit;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    line-height: inherit;
+    color: #e8e8e8;
+    opacity: 0.2;
+    transition: opacity 0.3s, color 0.3s;
+    scroll-snap-align: center;
+  }
+
+</style>
+
+<script>
+  const supportsScrollDriven = CSS.supports('animation-timeline', 'view()');
+
+  if (supportsScrollDriven) {
+    // Inject scroll-driven animation CSS at runtime to bypass
+    // Lightning CSS stripping unrecognized properties
+    const sheet = document.createElement('style');
+    sheet.textContent = `
+      .about-item {
+        animation: about-highlight linear both;
+        animation-timeline: view(block);
+        animation-range: cover calc(50% - 0.5lh) cover calc(50% + 0.5lh);
+        transition: none !important;
+      }
+      @keyframes about-highlight {
+        0%   { color: #e8e8e8; opacity: 0.2; }
+        50%  { color: #f3bf32; opacity: 1; }
+        100% { color: #e8e8e8; opacity: 0.2; }
+      }
+    `;
+    document.head.appendChild(sheet);
+  } else {
+    // JS fallback for browsers without scroll-driven animations
+    const scroller = document.getElementById('about-scroll');
+    const items = document.querySelectorAll<HTMLElement>('.about-item');
+    if (scroller && items.length) {
+      function updateHighlight() {
+        const center = scroller!.clientHeight / 2;
+        let closest: HTMLElement | null = null;
+        let closestDist = Infinity;
+
+        items.forEach(item => {
+          const rect = item.getBoundingClientRect();
+          const scrollRect = scroller!.getBoundingClientRect();
+          const itemCenter = rect.top - scrollRect.top + rect.height / 2;
+          const dist = Math.abs(itemCenter - center);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closest = item;
+          }
+        });
+
+        items.forEach(item => {
+          if (item === closest) {
+            item.style.color = '#f3bf32';
+            item.style.opacity = '1';
+          } else {
+            item.style.color = '#e8e8e8';
+            item.style.opacity = '0.2';
+          }
+        });
+      }
+
+      scroller.addEventListener('scroll', updateHighlight, { passive: true });
+      updateHighlight();
+    }
+  }
+</script>
