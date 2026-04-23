@@ -4,7 +4,7 @@
 >
   <div class="contact-frame">
     <div class="contact-content">
-      <h2 class="contact-heading">Let's build something.</h2>
+      <h2 id="contact-heading" class="contact-heading">Let's build something.</h2>
 
       <form id="contact-form" class="contact-form" novalidate>
         <div class="field-group">
@@ -220,6 +220,7 @@
   import gsap from 'gsap';
 
   const form = document.getElementById('contact-form') as HTMLFormElement;
+  const heading = document.getElementById('contact-heading')!;
   const errorEl = document.getElementById('contact-error')!;
   const confirmation = document.getElementById('contact-confirmation')!;
 
@@ -242,12 +243,13 @@
 
       if (!res.ok) throw new Error('Request failed');
 
-      // Success — fade form out, fade confirmation in
-      gsap.to(form, {
+      // Success — fade heading + form out, fade confirmation in
+      gsap.to([heading, form], {
         opacity: 0,
         duration: 0.4,
         ease: 'power2.inOut',
         onComplete: () => {
+          heading.style.display = 'none';
           form.style.display = 'none';
           confirmation.style.display = 'block';
           confirmation.style.opacity = '0';
