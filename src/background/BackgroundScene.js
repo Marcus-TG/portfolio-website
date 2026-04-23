@@ -30,8 +30,18 @@ export class BackgroundScene {
     this._mouse     = new THREE.Vector2(0, 0);
     this._mouseLerp = new THREE.Vector2(0, 0);
 
+    // Desktop defaults for mobile-responsive overrides
+    this._desktopDefaults = {
+      sphereRadius:   this.params.sphereRadius,
+      sphereOffsetX:  this.params.sphereOffsetX,
+      sphereOffsetY:  this.params.sphereOffsetY,
+      sphereSoftness: this.params.sphereSoftness,
+      noiseWaveScale: this.params.noiseWaveScale,
+    };
+
     this._initRenderer();
     this._initScene();
+    this._applyViewportScale();
     this._initEvents();
     this._initTweakpane();
     this._animate();
@@ -108,6 +118,28 @@ export class BackgroundScene {
   }
 
   // ---------------------------------------------------------------------------
+  // Mobile viewport scaling — adjust sphere for portrait screens
+  // ---------------------------------------------------------------------------
+  _applyViewportScale() {
+    const isMobile = window.innerWidth < 768;
+    const d = this._desktopDefaults;
+
+    if (isMobile) {
+      this.params.sphereRadius   = 0.58;
+      this.params.sphereOffsetX  = -0.30;
+      this.params.sphereOffsetY  = -0.20;
+      this.params.sphereSoftness = 0.023;
+      this.params.noiseWaveScale = 0.1;
+    } else {
+      this.params.sphereRadius   = d.sphereRadius;
+      this.params.sphereOffsetX  = d.sphereOffsetX;
+      this.params.sphereOffsetY  = d.sphereOffsetY;
+      this.params.sphereSoftness = d.sphereSoftness;
+      this.params.noiseWaveScale = d.noiseWaveScale;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Events — mouse + resize
   // ---------------------------------------------------------------------------
   _initEvents() {
@@ -121,6 +153,7 @@ export class BackgroundScene {
       const h = window.innerHeight;
       this.renderer.setSize(w, h);
       this.uniforms.uResolution.value.set(w, h);
+      this._applyViewportScale();
     };
 
     window.addEventListener('mousemove', this._onMouseMove);
@@ -185,7 +218,7 @@ export class BackgroundScene {
 
     const fSphere = pane.addFolder({ title: 'Sphere' });
     fSphere.addBinding(p, 'sphereRadius',   { min: 0.2,  max: 2.0, step: 0.01, label: 'radius' });
-    fSphere.addBinding(p, 'sphereSoftness', { min: 0.05, max: 0.3, step: 0.01, label: 'softness' });
+    fSphere.addBinding(p, 'sphereSoftness', { min: 0, max: 0.3, step: 0.001, label: 'softness' });
     fSphere.addBinding(p, 'sphereOffsetX',  { min: -0.3, max: 0.3, step: 0.01, label: 'offsetX' });
     fSphere.addBinding(p, 'sphereOffsetY',  { min: -0.3, max: 0.3, step: 0.01, label: 'offsetY' });
 
