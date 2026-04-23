@@ -202,6 +202,61 @@ const projects = [
   .projects-arrow:hover {
     color: #e8e8e8;
   }
+
+  /* ── Mobile (≤768px) ── */
+  @media (max-width: 768px) {
+    .projects-frame {
+      padding: 4rem 1rem 1.5rem 0.75rem;
+    }
+
+    .project-slide {
+      padding-left: 0;
+      padding-right: 0.5rem;
+    }
+
+    .project-title {
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+    }
+
+    .project-description {
+      font-size: 0.75rem;
+      max-width: 100%;
+    }
+
+    .projects-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .projects-tags-area {
+      position: relative;
+      height: 2.4rem;
+      width: 100%;
+      pointer-events: none;
+    }
+
+    .project-tags {
+      left: 0;
+      right: auto;
+      bottom: 0;
+      flex-wrap: wrap;
+      white-space: normal;
+    }
+
+    .projects-nav {
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      font-size: 0.65rem;
+    }
+
+    .projects-counter {
+      font-size: 0.65rem;
+    }
+  }
 </style>
 
 <script>
