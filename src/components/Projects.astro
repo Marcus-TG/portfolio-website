@@ -31,105 +31,235 @@ const projects = [
   id="projects"
   class="section absolute inset-0 opacity-0 pointer-events-none"
 >
-  <div class="projects-container">
-    <h2 class="projects-label">Projects</h2>
-    <div class="projects-list">
-      {projects.map(project => (
-        <div class="project-row">
-          <div class="project-title">{project.title}</div>
-          <div class="project-description">{project.description}</div>
-          <div class="project-tags">
-            {project.tags.map(tag => (
-              <span class="project-tag">{tag}</span>
-            ))}
-          </div>
+  <div class="projects-frame">
+    <!-- Counter — top left -->
+    <div class="projects-counter">
+      <span class="projects-counter-current">01</span>
+      <span class="projects-counter-sep">/</span>
+      <span class="projects-counter-total">04</span>
+    </div>
+
+    <!-- Center — project content -->
+    <div class="projects-center">
+      {projects.map((project, i) => (
+        <div class="project-slide" data-index={i} style={i === 0 ? '' : 'opacity: 0; pointer-events: none;'}>
+          <h2 class="project-title">{project.title}</h2>
+          <p class="project-description">{project.description}</p>
         </div>
       ))}
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="projects-bottom">
+      <!-- Nav arrows — bottom left -->
+      <div class="projects-nav">
+        <button class="projects-arrow" data-dir="prev" aria-label="Previous project">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="15" y1="10" x2="5" y2="10" />
+            <polyline points="10,5 5,10 10,15" />
+          </svg>
+        </button>
+        <button class="projects-arrow" data-dir="next" aria-label="Next project">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="10" x2="15" y2="10" />
+            <polyline points="10,5 15,10 10,15" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Tags — bottom right -->
+      <div class="projects-tags-area">
+        {projects.map((project, i) => (
+          <div class="project-tags" data-tags-index={i} style={i === 0 ? '' : 'opacity: 0;'}>
+            {project.tags.map((tag, t) => (
+              <Fragment>
+                {t > 0 && <span class="tag-sep">&middot;</span>}
+                <span class="tag">{tag}</span>
+              </Fragment>
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 </section>
 
 <style>
-  .projects-container {
+  .projects-frame {
     position: absolute;
     inset: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    padding: 9.2rem 3rem 3rem 3rem;
+    padding: 9.2rem 3rem 2.5rem 3rem;
   }
 
-  .projects-label {
+  /* Counter — top right */
+  .projects-counter {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+      'Liberation Mono', monospace;
     font-size: 0.75rem;
-    font-weight: 400;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #e8e8e8;
-    opacity: 0.5;
-    margin-bottom: 1.5rem;
+    color: #444;
+    letter-spacing: 0.05em;
+    user-select: none;
+    align-self: flex-end;
   }
 
-  .projects-list {
-    border-top: 1px solid #2c2c2c;
-    border-bottom: 1px solid #2c2c2c;
+  .projects-counter-sep {
+    margin-inline: 0.35em;
   }
 
-  .project-row {
-    display: grid;
-    grid-template-columns: 25% 45% 30%;
-    align-items: baseline;
-    padding: 1.75rem 0;
-    border-bottom: 1px solid #2c2c2c;
-    transition: background-color 0.25s ease;
+  /* Center — vertically centered project content */
+  .projects-center {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
   }
 
-  .project-row:last-child {
-    border-bottom: none;
+  .project-slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 42%;
+    padding-right: 4%;
   }
 
   .project-title {
-    font-size: 1.125rem;
-    font-weight: 500;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 300;
     color: #e8e8e8;
     letter-spacing: 0.01em;
-    padding-right: 1.5rem;
+    line-height: 1.15;
+    margin: 0;
   }
 
   .project-description {
     font-size: 0.875rem;
     font-weight: 300;
-    color: #e8e8e8;
-    opacity: 0.65;
+    color: rgba(232, 232, 232, 0.45);
     line-height: 1.6;
-    padding-right: 2rem;
-    transition: opacity 0.25s ease;
+    max-width: 480px;
+    margin: 1rem 0 0;
+    padding: 0;
+  }
+
+  /* Bottom bar */
+  .projects-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  /* Tags — bottom right */
+  .projects-tags-area {
+    position: relative;
+    height: 1.2rem;
   }
 
   .project-tags {
+    position: absolute;
+    right: 0;
+    bottom: 0;
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    justify-content: flex-end;
-    padding-left: 1rem;
+    align-items: center;
+    gap: 0.4em;
+    flex-wrap: nowrap;
+    white-space: nowrap;
   }
 
-  .project-tag {
+  .tag {
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
       'Liberation Mono', monospace;
     font-size: 0.7rem;
     color: #f3bf32;
     opacity: 0.6;
     letter-spacing: 0.03em;
-    transition: opacity 0.25s ease;
   }
 
-  /* Row hover — brighten description + tags */
-  .project-row:hover .project-description {
-    opacity: 1;
+  .tag-sep {
+    font-size: 0.5rem;
+    color: #444;
   }
 
-  .project-row:hover .project-tag {
-    opacity: 1;
+  /* Nav arrows — bottom right */
+  .projects-nav {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .projects-arrow {
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    color: rgba(232, 232, 232, 0.4);
+    cursor: pointer;
+    transition: color 0.2s ease;
+    line-height: 0;
+  }
+
+  .projects-arrow:hover {
+    color: #e8e8e8;
   }
 </style>
+
+<script>
+  import gsap from 'gsap';
+
+  const section = document.getElementById('projects')!;
+  const slides = section.querySelectorAll<HTMLElement>('.project-slide');
+  const tagSets = section.querySelectorAll<HTMLElement>('.project-tags');
+  const counterCurrent = section.querySelector('.projects-counter-current')!;
+  const total = slides.length;
+  let current = 0;
+  let animating = false;
+
+  function goTo(next: number) {
+    if (animating || next === current) return;
+    animating = true;
+
+    const prev = current;
+    current = next;
+
+    // Fade out old slide + tags, then swap, then fade in
+    gsap.to([slides[prev], tagSets[prev]], {
+      opacity: 0,
+      duration: 0.3,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        slides[prev].style.pointerEvents = 'none';
+
+        // Update counter at zero-opacity moment
+        counterCurrent.textContent = String(current + 1).padStart(2, '0');
+
+        // Fade in new slide + tags
+        slides[current].style.pointerEvents = '';
+        gsap.to([slides[current], tagSets[current]], {
+          opacity: 1,
+          duration: 0.3,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            animating = false;
+          },
+        });
+      },
+    });
+  }
+
+  // Arrow buttons
+  section.querySelectorAll<HTMLButtonElement>('.projects-arrow').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dir = btn.dataset.dir;
+      if (dir === 'next') goTo((current + 1) % total);
+      else goTo((current - 1 + total) % total);
+    });
+  });
+
+  // Keyboard arrows — only when projects section is visible
+  document.addEventListener('keydown', e => {
+    if (section.classList.contains('pointer-events-none')) return;
+    if (e.key === 'ArrowRight') goTo((current + 1) % total);
+    else if (e.key === 'ArrowLeft') goTo((current - 1 + total) % total);
+  });
+</script>
