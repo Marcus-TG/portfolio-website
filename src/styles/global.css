@@ -21,3 +21,64 @@ body {
   min-height: 100vh;
   margin: 0;
 }
+
+/* ── Mobile layout (≤768px) ── */
+@media (max-width: 768px) {
+  /* Frame — reduce inset from 3rem to 8px */
+  #page-frame {
+    inset: 8px !important;
+  }
+
+  /* Black mask — reduce border from 3rem to 8px */
+  .border-black.border-\[3rem\] {
+    border-width: 8px !important;
+  }
+
+  /* Sidebar — 40% width, scaled text */
+  #sidebar {
+    top: 8px !important;
+    left: 8px !important;
+    bottom: 8px !important;
+    width: 40% !important;
+    padding: 1.5rem 0.75rem !important;
+  }
+
+  #sidebar .text-5xl {
+    font-size: 1.2rem !important;
+    white-space: normal !important;
+    line-height: 1.3 !important;
+  }
+
+  #sidebar #job-title {
+    font-size: 0.55rem !important;
+    letter-spacing: 0.12em !important;
+    margin-top: 0.4rem !important;
+  }
+
+  #sidebar .nav-link {
+    font-size: 0.65rem !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  #sidebar ul {
+    gap: 0 !important;
+  }
+
+  /* Content area — right 60% */
+  #content-area {
+    top: 8px !important;
+    right: 8px !important;
+    bottom: 8px !important;
+    left: 40% !important;
+  }
+
+  /* Home section text */
+  #home p {
+    font-size: 0.7rem !important;
+    right: 0.75rem !important;
+    bottom: 0.75rem !important;
+    line-height: 1.5 !important;
+  }
+}
