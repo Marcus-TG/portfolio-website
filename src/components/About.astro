@@ -117,11 +117,12 @@ const items = [
       position: fixed !important;
       top: 50% !important;
       left: 25px !important;
-      transform: translateY(-50%) !important;
       height: auto !important;
       display: block !important;
       padding: 0 0 0 0.5rem !important;
       z-index: 5 !important;
+      line-height: 1.2 !important;
+      transform: translateY(-0.6lh) !important;
     }
 
     .about-heading {
@@ -130,15 +131,21 @@ const items = [
 
     .about-list {
       font-size: clamp(1.4rem, 5vw, 2rem);
-      padding-block: calc(40vh - 0.6em);
+      padding-block: calc(50vh - 0.6lh);
       padding-inline: 0;
+    }
+
+    .about-item {
+      animation: none !important;
+      animation-timeline: none !important;
     }
   }
 
 </style>
 
 <script>
-  const supportsScrollDriven = CSS.supports('animation-timeline', 'view()');
+  const isMobileDevice = window.innerWidth < 768;
+  const supportsScrollDriven = !isMobileDevice && CSS.supports('animation-timeline', 'view()');
 
   if (supportsScrollDriven) {
     // Inject scroll-driven animation CSS at runtime to bypass
@@ -168,11 +175,14 @@ const items = [
         let closest: HTMLElement | null = null;
         let closestDist = Infinity;
 
+        const isMobile = window.innerWidth < 768;
         items.forEach(item => {
           const rect = item.getBoundingClientRect();
           const scrollRect = scroller!.getBoundingClientRect();
-          const itemCenter = rect.top - scrollRect.top + rect.height / 2;
-          const dist = Math.abs(itemCenter - center);
+          const itemAnchor = isMobile
+            ? rect.top - scrollRect.top
+            : rect.top - scrollRect.top + rect.height / 2;
+          const dist = Math.abs(itemAnchor - center);
           if (dist < closestDist) {
             closestDist = dist;
             closest = item;
