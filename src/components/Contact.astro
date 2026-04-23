@@ -175,6 +175,45 @@
   .contact-email:hover {
     color: #e8e8e8;
   }
+
+  /* ── Mobile (≤768px) ── */
+  @media (max-width: 768px) {
+    .contact-frame {
+      padding: 2rem 1rem 1.5rem 0.5rem;
+    }
+
+    .contact-content {
+      padding-left: 0;
+      padding-right: 1rem;
+    }
+
+    .contact-heading {
+      font-size: clamp(1.8rem, 6vw, 2.5rem);
+      margin-bottom: 2rem;
+    }
+
+    .field-input {
+      max-width: 100%;
+    }
+
+    .submit-row {
+      max-width: 100%;
+    }
+
+    .field-label {
+      color: rgba(232, 232, 232, 0.55);
+    }
+
+    .field-input {
+      border-bottom-color: rgba(232, 232, 232, 0.3);
+      font-size: 1rem;
+    }
+
+    .contact-email {
+      color: rgba(232, 232, 232, 0.4);
+      word-break: break-all;
+    }
+  }
 </style>
 
 <script>
