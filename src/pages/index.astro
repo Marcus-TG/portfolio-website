@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import About from '../components/About.astro';
 import Projects from '../components/Projects.astro';
+import Contact from '../components/Contact.astro';
 
 const sections = ['home', 'projects', 'about', 'contact'];
 ---
@@ -62,17 +63,8 @@ const sections = ['home', 'projects', 'about', 'contact'];
       <!-- About -->
       <About />
 
-      <!-- Other sections -->
-      {sections.filter(id => !['home', 'about', 'projects'].includes(id)).map(id => (
-        <section
-          id={id}
-          class="section absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none"
-        >
-          <h1 class="text-4xl font-light tracking-widest uppercase text-text-primary">
-            {id.charAt(0).toUpperCase() + id.slice(1)}
-          </h1>
-        </section>
-      ))}
+      <!-- Contact -->
+      <Contact />
     </main>
 
   </body>

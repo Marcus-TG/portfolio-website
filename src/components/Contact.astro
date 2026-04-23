@@ -1,0 +1,226 @@
+<section
+  id="contact"
+  class="section absolute inset-0 opacity-0 pointer-events-none"
+>
+  <div class="contact-frame">
+    <div class="contact-content">
+      <h2 class="contact-heading">Let's build something.</h2>
+
+      <form id="contact-form" class="contact-form" novalidate>
+        <div class="field-group">
+          <label for="contact-name" class="field-label">Name</label>
+          <input
+            type="text"
+            id="contact-name"
+            name="name"
+            class="field-input"
+            autocomplete="name"
+            required
+          />
+        </div>
+
+        <div class="field-group">
+          <label for="contact-email" class="field-label">Email</label>
+          <input
+            type="email"
+            id="contact-email"
+            name="email"
+            class="field-input"
+            autocomplete="email"
+            required
+          />
+        </div>
+
+        <div class="field-group">
+          <label for="contact-message" class="field-label">Message</label>
+          <textarea
+            id="contact-message"
+            name="message"
+            class="field-input field-textarea"
+            rows="4"
+            required
+          ></textarea>
+        </div>
+
+        <div class="submit-row">
+          <span id="contact-error" class="contact-error"></span>
+          <button type="submit" class="submit-btn">Send message →</button>
+        </div>
+      </form>
+
+      <div id="contact-confirmation" class="contact-confirmation">
+        <h2 class="contact-heading">Message received. I'll be in touch.</h2>
+      </div>
+
+      <a href="mailto:marcus@marcusstrauss.dev" class="contact-email">marcus@marcusstrauss.dev</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-frame {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 9.2rem 3rem 2.5rem 3rem;
+  }
+
+  .contact-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 42%;
+    padding-right: 4%;
+  }
+
+  .contact-heading {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 300;
+    color: #e8e8e8;
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    margin: 0 0 3rem;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .field-label {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+      'Liberation Mono', monospace;
+    font-size: 0.7rem;
+    color: rgba(232, 232, 232, 0.35);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .field-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(232, 232, 232, 0.15);
+    color: #e8e8e8;
+    font-size: 0.95rem;
+    font-family: inherit;
+    padding: 0.5rem 0;
+    outline: none;
+    transition: border-color 0.2s ease;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .field-input:focus {
+    border-bottom-color: rgba(232, 232, 232, 0.5);
+  }
+
+  .field-textarea {
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  .submit-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    max-width: 480px;
+    gap: 1rem;
+  }
+
+  .submit-btn {
+    background: none;
+    border: none;
+    color: #e8e8e8;
+    opacity: 0.6;
+    font-size: 0.875rem;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .submit-btn:hover {
+    opacity: 1;
+  }
+
+  .contact-error {
+    font-size: 0.75rem;
+    color: rgba(232, 232, 232, 0.4);
+    flex: 1;
+    text-align: right;
+  }
+
+  .contact-confirmation {
+    display: none;
+  }
+
+  .contact-email {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+      'Liberation Mono', monospace;
+    font-size: 0.75rem;
+    color: #444;
+    text-decoration: none;
+    margin-top: 3rem;
+    transition: color 0.2s ease;
+  }
+
+  .contact-email:hover {
+    color: #e8e8e8;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const errorEl = document.getElementById('contact-error')!;
+  const confirmation = document.getElementById('contact-confirmation')!;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.textContent = '';
+
+    const name = (form.elements.namedItem('name') as HTMLInputElement).value.trim();
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+    const message = (form.elements.namedItem('message') as HTMLTextAreaElement).value.trim();
+
+    if (!name || !email || !message) return;
+
+    try {
+      const res = await fetch('https://n8n.ducksonaboat.ca/webhook/contact-form', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message }),
+      });
+
+      if (!res.ok) throw new Error('Request failed');
+
+      // Success — fade form out, fade confirmation in
+      gsap.to(form, {
+        opacity: 0,
+        duration: 0.4,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          form.style.display = 'none';
+          confirmation.style.display = 'block';
+          confirmation.style.opacity = '0';
+          gsap.to(confirmation, {
+            opacity: 1,
+            duration: 0.4,
+            ease: 'power2.inOut',
+          });
+        },
+      });
+    } catch {
+      errorEl.textContent = "Something went wrong. Try emailing directly.";
+    }
+  });
+</script>
