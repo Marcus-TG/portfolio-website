@@ -3,26 +3,26 @@ const projects = [
   {
     title: 'Infrastructure Stack',
     description:
-      'A two-year evolution in self-hosted infrastructure — dual-WAN load balancing, 10Gb networking fabric, VLAN segmentation, and containerized service orchestration across two physical machines.',
+      'A two-year evolution in self-hosted infrastructure — dual-WAN load balancing, 10Gb networking fabric, VLAN segmentation, and containerized service orchestration across dedicated hardware.',
     tags: ['UniFi', 'TrueNAS', 'Docker', 'NGINX', 'Cloudflare', 'ZFS'],
   },
   {
     title: 'AI Policy Assistant',
     description:
-      'A RAG pipeline that monitors corporate documentation in real-time, vectorizes it, and surfaces accurate answers through a conversational AI interface — with zero hallucination guardrails.',
-    tags: ['Gemini', 'Pinecone', 'RAG', 'Python', 'n8n'],
+      'A RAG pipeline that monitors corporate documentation in real-time, vectorizes it on change, and surfaces accurate answers through a conversational interface — with strict source-only guardrails.',
+    tags: ['RAG', 'Pinecone', 'Gemini', 'Python', 'n8n'],
   },
   {
     title: 'Social Intelligence Engine',
     description:
-      'An automated competitive intelligence pipeline that scrapes social platforms through residential proxies, runs AI sentiment analysis, and delivers structured reports on demand.',
-    tags: ['Bright Data', 'Gemini', 'Headless Browser', 'Webhooks', 'Python'],
+      'An end-to-end competitive intelligence pipeline — scrapes social platforms via residential proxies, runs AI-driven sentiment analysis, and delivers structured executive reports on demand via webhook.',
+    tags: ['Bright Data', 'Gemini', 'Python', 'Webhooks', 'Data Engineering'],
   },
   {
     title: 'Private AI Inference Server',
     description:
-      'A self-hosted LLM inference server running open-source models on consumer GPU hardware, integrated into existing reverse proxy infrastructure and available as a local API endpoint for automation workflows.',
-    tags: ['Ollama', 'Docker', 'NGINX', 'Llama 3.1', 'n8n'],
+      'A self-hosted LLM inference server running open-source models on local GPU hardware — integrated into existing reverse proxy infrastructure and exposed as a private API endpoint for automation workflows.',
+    tags: ['Ollama', 'Docker', 'NGINX', 'Open-Source LLMs', 'n8n'],
   },
 ];
 ---
