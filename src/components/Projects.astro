@@ -317,4 +317,22 @@ const projects = [
     if (e.key === 'ArrowRight') goTo((current + 1) % total);
     else if (e.key === 'ArrowLeft') goTo((current - 1 + total) % total);
   });
+
+  // Touch swipe navigation
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  section.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].clientX;
+    touchStartY = e.changedTouches[0].clientY;
+  }, { passive: true });
+
+  section.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+    if (Math.abs(dx) > 50 && dy < 75) {
+      if (dx < 0) goTo((current + 1) % total);
+      else goTo((current - 1 + total) % total);
+    }
+  }, { passive: true });
 </script>
