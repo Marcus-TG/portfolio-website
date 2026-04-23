@@ -207,6 +207,7 @@ const projects = [
   @media (max-width: 768px) {
     .projects-frame {
       padding: 4rem 1rem 1.5rem 0.75rem;
+      touch-action: pan-y;
     }
 
     .project-slide {
@@ -319,15 +320,16 @@ const projects = [
   });
 
   // Touch swipe navigation
+  const swipeTarget = section.querySelector<HTMLElement>('.projects-frame')!;
   let touchStartX = 0;
   let touchStartY = 0;
 
-  section.addEventListener('touchstart', (e) => {
+  swipeTarget.addEventListener('touchstart', (e) => {
     touchStartX = e.changedTouches[0].clientX;
     touchStartY = e.changedTouches[0].clientY;
   }, { passive: true });
 
-  section.addEventListener('touchend', (e) => {
+  swipeTarget.addEventListener('touchend', (e) => {
     const dx = e.changedTouches[0].clientX - touchStartX;
     const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
     if (Math.abs(dx) > 50 && dy < 75) {
