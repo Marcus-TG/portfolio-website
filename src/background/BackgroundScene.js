@@ -43,7 +43,6 @@ export class BackgroundScene {
     this._initScene();
     this._applyViewportScale();
     this._initEvents();
-    this._initTweakpane();
     this._animate();
   }
 
@@ -198,47 +197,6 @@ export class BackgroundScene {
   }
 
   // ---------------------------------------------------------------------------
-  // Tweakpane (dev only)
-  // ---------------------------------------------------------------------------
-  async _initTweakpane() {
-    if (!import.meta.env.DEV) return;
-
-    const { Pane } = await import('tweakpane');
-    const pane = new Pane({ title: 'Background' });
-    this._pane = pane;
-    const p = this.params;
-
-    const fNoise = pane.addFolder({ title: 'Noise' });
-    fNoise.addBinding(p, 'noiseScale',     { min: 0.1,  max: 10.0,         step: 0.1,   label: 'scale' });
-    fNoise.addBinding(p, 'noiseSpeed',     { min: 0.01, max: 0.2,          step: 0.001, label: 'speed' });
-    fNoise.addBinding(p, 'noiseDirection', { min: 0,    max: Math.PI * 2,  step: 0.05,  label: 'direction' });
-    fNoise.addBinding(p, 'noiseWaveSpeed', { min: 0.0,  max: 0.5,          step: 0.005, label: 'waveSpeed' });
-    fNoise.addBinding(p, 'noiseWaveScale', { min: 0.1,  max: 5.0,          step: 0.1,   label: 'waveStretch' });
-    fNoise.addBinding(p, 'noiseContrast',  { min: 1.0,  max: 5.0,          step: 0.1,   label: 'contrast' });
-
-    const fSphere = pane.addFolder({ title: 'Sphere' });
-    fSphere.addBinding(p, 'sphereRadius',   { min: 0.2,  max: 2.0, step: 0.01, label: 'radius' });
-    fSphere.addBinding(p, 'sphereSoftness', { min: 0, max: 0.3, step: 0.001, label: 'softness' });
-    fSphere.addBinding(p, 'sphereOffsetX',  { min: -0.3, max: 0.3, step: 0.01, label: 'offsetX' });
-    fSphere.addBinding(p, 'sphereOffsetY',  { min: -0.3, max: 0.3, step: 0.01, label: 'offsetY' });
-
-    const fLight = pane.addFolder({ title: 'Light' });
-    fLight.addBinding(p, 'lightAngle',         { min: 0, max: Math.PI * 2, step: 0.01, label: 'angle' });
-    fLight.addBinding(p, 'lightConcentration', { min: 1.0, max: 5.0,       step: 0.1,  label: 'concentration' });
-
-    const fGrain = pane.addFolder({ title: 'Grain' });
-    fGrain.addBinding(p, 'grainSpeed', { min: 0.01, max: 2.0, step: 0.01, label: 'speed' });
-    fGrain.addBinding(p, 'grainSize',  { min: 0,  max: 8.0, step: 0.1,  label: 'size' });
-
-    const fOutput = pane.addFolder({ title: 'Output' });
-    fOutput.addBinding(p, 'maxBrightness',  { min: 0.1, max: 5.0, step: 0.01,  label: 'maxBrightness' });
-    fOutput.addBinding(p, 'baseBrightness', { min: 0.0, max: 0.1, step: 0.005, label: 'baseBrightness' });
-
-    const fMouse = pane.addFolder({ title: 'Mouse' });
-    fMouse.addBinding(p, 'mouseStrength', { min: 0, max: 1, step: 0.01, label: 'strength' });
-  }
-
-  // ---------------------------------------------------------------------------
   // Cleanup
   // ---------------------------------------------------------------------------
   dispose() {
@@ -249,7 +207,6 @@ export class BackgroundScene {
     this.mesh.material.dispose();
     this._grainTexture.dispose();
     this.renderer.dispose();
-    if (this._pane) this._pane.dispose();
     this.container.removeChild(this.renderer.domElement);
   }
 }

@@ -9,11 +9,6 @@
   --color-accent-tertiary: #ffede7;
 }
 
-/* Tweakpane panel — above all content layers */
-.tp-dfwv {
-  z-index: 9999 !important;
-}
-
 html,
 body {
   background-color: transparent;
