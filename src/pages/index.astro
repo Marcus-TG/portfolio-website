@@ -1,11 +1,10 @@
 ---
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
-import About from '../components/About.astro';
 import Projects from '../components/Projects.astro';
 import Contact from '../components/Contact.astro';
 
-const sections = ['home', 'projects', 'about', 'contact'];
+const sections = ['home', 'projects', 'contact'];
 ---
 
 <html lang="en">
@@ -63,9 +62,6 @@ const sections = ['home', 'projects', 'about', 'contact'];
       <!-- Projects -->
       <Projects />
 
-      <!-- About -->
-      <About />
-
       <!-- Contact -->
       <Contact />
     </main>
@@ -82,7 +78,7 @@ const sections = ['home', 'projects', 'about', 'contact'];
 
   function getTargetSection(): string {
     const hash = window.location.hash.slice(1);
-    const valid = ['home', 'projects', 'about', 'contact'];
+    const valid = ['home', 'projects', 'contact'];
     return valid.includes(hash) ? hash : 'home';
   }
 
