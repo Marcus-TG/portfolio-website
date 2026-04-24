@@ -319,6 +319,15 @@ const projects = [
     else if (e.key === 'ArrowLeft') goTo((current - 1 + total) % total);
   });
 
+  // Scroll wheel navigation
+  section.addEventListener('wheel', (e) => {
+    if (animating) return;
+    if (Math.abs(e.deltaY) < 30) return;
+    e.preventDefault();
+    if (e.deltaY > 0) goTo((current + 1) % total);
+    else goTo((current - 1 + total) % total);
+  }, { passive: false });
+
   // Touch swipe navigation
   const swipeTarget = section.querySelector<HTMLElement>('.projects-frame')!;
   let touchStartX = 0;
