@@ -17,25 +17,36 @@ body {
   margin: 0;
 }
 
-/* ── Landscape lock overlay — mobile only ── */
-.rotate-overlay {
+/* ── Landscape overlay — mobile only ── */
+.landscape-overlay {
   display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #0e0e0e;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
 }
 
-@media (max-width: 768px) and (orientation: landscape) {
-  .rotate-overlay {
+.landscape-text {
+  color: #e8e8e8;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+.landscape-subtext {
+  color: rgba(232, 232, 232, 0.4);
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .landscape-overlay {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: #0e0e0e;
-    color: #e8e8e8;
-    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
-      'Liberation Mono', monospace;
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
   }
 }
 
