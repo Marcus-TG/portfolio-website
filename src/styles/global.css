@@ -17,6 +17,28 @@ body {
   margin: 0;
 }
 
+/* ── Landscape lock overlay — mobile only ── */
+.rotate-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+  .rotate-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #0e0e0e;
+    color: #e8e8e8;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+      'Liberation Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+}
+
 /* ── Mobile layout (≤768px) ── */
 @media (max-width: 768px) {
   /* Frame — reduce inset from 3rem to 12px */
