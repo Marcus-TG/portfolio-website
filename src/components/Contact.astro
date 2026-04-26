@@ -183,7 +183,7 @@
     }
 
     .contact-content {
-      padding-left: 0;
+      padding-left: calc(7vw + 0.75rem);
       padding-right: 1rem;
     }
 
@@ -212,6 +212,13 @@
     .contact-email {
       color: rgba(232, 232, 232, 0.4);
       word-break: break-all;
+    }
+  }
+
+  /* ── Small phones (≤430px) ── */
+  @media (max-width: 430px) {
+    .contact-heading {
+      font-size: clamp(1.4rem, 5vw, 1.8rem);
     }
   }
 </style>
