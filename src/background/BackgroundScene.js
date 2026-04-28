@@ -23,7 +23,8 @@ export class BackgroundScene {
       grainSpeed:         0.2,
       grainSize:          1.0,
       maxBrightness:      3.0,
-      baseBrightness:     0.0, 
+      baseBrightness:     0.0,
+      knee:               0.55,
       mouseStrength:      1.0,
     };
 
@@ -103,6 +104,7 @@ export class BackgroundScene {
       uGrainSize:         { value: this.params.grainSize },
       uMaxBrightness:     { value: this.params.maxBrightness },
       uBaseBrightness:    { value: this.params.baseBrightness },
+      uKnee:              { value: this.params.knee },
     };
 
     const material = new THREE.ShaderMaterial({
@@ -208,6 +210,7 @@ export class BackgroundScene {
     this.uniforms.uGrainSize.value         = p.grainSize;
     this.uniforms.uMaxBrightness.value     = p.maxBrightness;
     this.uniforms.uBaseBrightness.value    = p.baseBrightness;
+    this.uniforms.uKnee.value              = p.knee;
 
     this.renderer.render(this.scene, this.camera);
   }

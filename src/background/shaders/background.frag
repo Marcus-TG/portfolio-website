@@ -15,6 +15,7 @@ uniform float uGrainSpeed;
 uniform float uGrainSize;
 uniform float uMaxBrightness;
 uniform float uBaseBrightness;
+uniform float uKnee;
 uniform float uNoiseDirection;
 uniform float uNoiseWaveSpeed;
 uniform float uNoiseWaveScale;
@@ -96,7 +97,12 @@ void main() {
   float grain = rand * sphereBrightness;
 
   // --- final composite ---
-  vec3 color = vec3(uBaseBrightness + grain * uMaxBrightness);
-  color = clamp(color, 0.0, 1.0);
+  // Soft-knee compression: pass-through below uKnee, smooth asymptote to 1.0 above.
+  // Tames bright peaks without darkening mid-range.
+  float lum = uBaseBrightness + grain * uMaxBrightness;
+  float overshoot = max(lum - uKnee, 0.0);
+  float compressed = uKnee + (1.0 - uKnee) * (1.0 - exp(-overshoot / max(1.0 - uKnee, 0.001)));
+  lum = (lum < uKnee) ? lum : compressed;
+  vec3 color = vec3(clamp(lum, 0.0, 1.0));
   gl_FragColor = vec4(color, 1.0);
 }
