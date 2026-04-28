@@ -78,7 +78,7 @@
   .contact-heading {
     font-size: clamp(2.5rem, 6vw, 5rem);
     font-weight: 300;
-    color: #e8e8e8;
+    color: var(--color-text-primary);
     letter-spacing: 0.01em;
     line-height: 1.15;
     margin: 0 0 3rem;
@@ -99,7 +99,7 @@
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
       'Liberation Mono', monospace;
     font-size: 0.7rem;
-    color: rgba(232, 232, 232, 0.55);
+    color: color-mix(in srgb, var(--color-text-primary) 55%, transparent);
     letter-spacing: 0.05em;
     margin-bottom: 0.5rem;
   }
@@ -107,8 +107,8 @@
   .field-input {
     background: transparent;
     border: none;
-    border-bottom: 1px solid rgba(232, 232, 232, 0.25);
-    color: #e8e8e8;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-text-primary) 25%, transparent);
+    color: var(--color-text-primary);
     font-size: 0.95rem;
     font-family: inherit;
     padding: 0.5rem 0;
@@ -119,7 +119,7 @@
   }
 
   .field-input:focus {
-    border-bottom-color: rgba(232, 232, 232, 0.7);
+    border-bottom-color: color-mix(in srgb, var(--color-text-primary) 70%, transparent);
   }
 
   .field-textarea {
@@ -138,7 +138,7 @@
   .submit-btn {
     background: none;
     border: none;
-    color: #e8e8e8;
+    color: var(--color-text-primary);
     opacity: 0.6;
     font-size: 0.875rem;
     font-family: inherit;
@@ -158,7 +158,7 @@
 
   .contact-error {
     font-size: 0.75rem;
-    color: rgba(232, 232, 232, 0.4);
+    color: color-mix(in srgb, var(--color-text-primary) 40%, transparent);
     flex: 1;
     text-align: right;
   }
@@ -171,14 +171,14 @@
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
       'Liberation Mono', monospace;
     font-size: 0.75rem;
-    color: rgba(232, 232, 232, 0.35);
+    color: color-mix(in srgb, var(--color-text-primary) 35%, transparent);
     text-decoration: none;
     margin-top: 3rem;
     transition: color 0.2s ease;
   }
 
   .contact-email:hover {
-    color: #e8e8e8;
+    color: var(--color-text-primary);
   }
 
   /* ── Mobile (≤768px) ── */
@@ -209,11 +209,11 @@
     }
 
     .field-label {
-      color: rgba(232, 232, 232, 0.65);
+      color: color-mix(in srgb, var(--color-text-primary) 65%, transparent);
     }
 
     .field-input {
-      border-bottom-color: rgba(232, 232, 232, 0.4);
+      border-bottom-color: color-mix(in srgb, var(--color-text-primary) 40%, transparent);
       font-size: 1rem;
       min-height: 44px;
       padding: 0.6rem 0;
@@ -230,7 +230,7 @@
     }
 
     .contact-email {
-      color: rgba(232, 232, 232, 0.4);
+      color: color-mix(in srgb, var(--color-text-primary) 40%, transparent);
       word-break: break-all;
       min-height: 44px;
       display: inline-flex;

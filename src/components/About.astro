@@ -67,7 +67,7 @@ const items = [
     font-weight: 300;
     letter-spacing: 0.02em;
     line-height: 1.2;
-    color: #e8e8e8;
+    color: var(--color-text-primary);
     white-space: nowrap;
   }
 
@@ -88,7 +88,7 @@ const items = [
     font-weight: 300;
     letter-spacing: 0.02em;
     line-height: inherit;
-    color: #e8e8e8;
+    color: var(--color-text-primary);
     opacity: 0.2;
     transition: opacity 0.3s, color 0.3s;
     scroll-snap-align: center;
@@ -153,9 +153,9 @@ const items = [
         transition: none !important;
       }
       @keyframes about-highlight {
-        0%   { color: #e8e8e8; opacity: 0.2; }
-        50%  { color: #f3bf32; opacity: 1; }
-        100% { color: #e8e8e8; opacity: 0.2; }
+        0%   { color: var(--color-text-primary); opacity: 0.2; }
+        50%  { color: var(--color-accent-primary); opacity: 1; }
+        100% { color: var(--color-text-primary); opacity: 0.2; }
       }
     `;
     document.head.appendChild(sheet);
@@ -185,10 +185,10 @@ const items = [
 
         items.forEach(item => {
           if (item === closest) {
-            item.style.color = '#f3bf32';
+            item.style.color = 'var(--color-accent-primary)';
             item.style.opacity = '1';
           } else {
-            item.style.color = '#e8e8e8';
+            item.style.color = 'var(--color-text-primary)';
             item.style.opacity = '0.2';
           }
         });

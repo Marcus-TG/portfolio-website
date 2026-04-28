@@ -98,7 +98,7 @@ const projects = [
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
       'Liberation Mono', monospace;
     font-size: 0.75rem;
-    color: rgba(232, 232, 232, 0.4);
+    color: color-mix(in srgb, var(--color-text-primary) 40%, transparent);
     letter-spacing: 0.05em;
     user-select: none;
     align-self: flex-end;
@@ -129,7 +129,7 @@ const projects = [
   .project-title {
     font-size: clamp(2.5rem, 6vw, 5rem);
     font-weight: 300;
-    color: #e8e8e8;
+    color: var(--color-text-primary);
     letter-spacing: 0.01em;
     line-height: 1.15;
     margin: 0;
@@ -138,7 +138,7 @@ const projects = [
   .project-description {
     font-size: 0.875rem;
     font-weight: 300;
-    color: rgba(232, 232, 232, 0.45);
+    color: color-mix(in srgb, var(--color-text-primary) 45%, transparent);
     line-height: 1.6;
     max-width: 480px;
     margin: 1rem 0 0;
@@ -173,14 +173,14 @@ const projects = [
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
       'Liberation Mono', monospace;
     font-size: 0.7rem;
-    color: #f3bf32;
+    color: var(--color-accent-primary);
     opacity: 0.6;
     letter-spacing: 0.03em;
   }
 
   .tag-sep {
     font-size: 0.5rem;
-    color: #444;
+    color: color-mix(in srgb, var(--color-text-primary) 25%, transparent);
   }
 
   /* Nav arrows — bottom right */
@@ -193,14 +193,14 @@ const projects = [
     background: none;
     border: none;
     padding: 0.25rem;
-    color: rgba(232, 232, 232, 0.4);
+    color: color-mix(in srgb, var(--color-text-primary) 40%, transparent);
     cursor: pointer;
     transition: color 0.2s ease;
     line-height: 0;
   }
 
   .projects-arrow:hover {
-    color: #e8e8e8;
+    color: var(--color-text-primary);
   }
 
   /* ── Mobile (≤768px) ── */

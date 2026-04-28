@@ -23,7 +23,7 @@ import Contact from '../components/Contact.astro';
     <div id="background" class="fixed inset-0 z-0"></div>
 
     <!-- Scrim — subtle dark overlay for legibility over shader blooms -->
-    <div class="fixed inset-0 z-[1] pointer-events-none" style="background: rgba(14, 14, 14, 0.35)"></div>
+    <div class="fixed inset-0 z-[1] pointer-events-none" style="background: color-mix(in srgb, var(--color-background) 35%, transparent)"></div>
 
     <!-- Black mask outside page frame -->
     <div class="fixed inset-0 z-[2] pointer-events-none border-[3rem] border-black"></div>
@@ -33,7 +33,7 @@ import Contact from '../components/Contact.astro';
 
     <!-- Landscape overlay — mobile only -->
     <div class="landscape-overlay">
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#e8e8e8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-primary)">
         <rect x="6" y="3" width="20" height="26" rx="2" />
         <path d="M22 25 L26 21 M26 21 L22 17 M26 21 L18 21" />
       </svg>
