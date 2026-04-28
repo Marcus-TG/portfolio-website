@@ -39,6 +39,8 @@ export class BackgroundScene {
       noiseWaveScale: this.params.noiseWaveScale,
     };
 
+    this._paused = false;
+
     this._initRenderer();
     this._initScene();
     this._applyViewportScale();
@@ -155,8 +157,22 @@ export class BackgroundScene {
       this._applyViewportScale();
     };
 
+    // Pause rAF when tab hidden — saves battery / GPU on mobile and laptops.
+    // Also reset clock delta on resume so uTime doesn't jump forward.
+    this._onVisibilityChange = () => {
+      if (document.hidden) {
+        this._paused = true;
+        cancelAnimationFrame(this._rafId);
+      } else if (this._paused) {
+        this._paused = false;
+        this.clock.getDelta();
+        this._animate();
+      }
+    };
+
     window.addEventListener('mousemove', this._onMouseMove);
     window.addEventListener('resize', this._onResize);
+    document.addEventListener('visibilitychange', this._onVisibilityChange);
   }
 
   // ---------------------------------------------------------------------------
@@ -203,6 +219,7 @@ export class BackgroundScene {
     cancelAnimationFrame(this._rafId);
     window.removeEventListener('mousemove', this._onMouseMove);
     window.removeEventListener('resize', this._onResize);
+    document.removeEventListener('visibilitychange', this._onVisibilityChange);
     this.mesh.geometry.dispose();
     this.mesh.material.dispose();
     this._grainTexture.dispose();

@@ -12,9 +12,9 @@ const PAUSE = 2.75;       // seconds between transitions
 const TRANSITION = 0.45;  // seconds per fade/slide
 const SLIDE_PX = 12;      // subtle vertical shift
 
-export function initTitleCycler(): void {
+export function initTitleCycler(): () => void {
   const el = document.getElementById('job-title');
-  if (!el) return;
+  if (!el) return () => {};
 
   let index = 0;
 
@@ -46,5 +46,10 @@ export function initTitleCycler(): void {
   }
 
   // Start cycling after initial pause
-  setInterval(cycleNext, (PAUSE + TRANSITION) * 1000);
+  const intervalId = window.setInterval(cycleNext, (PAUSE + TRANSITION) * 1000);
+
+  return () => {
+    clearInterval(intervalId);
+    gsap.killTweensOf(el);
+  };
 }

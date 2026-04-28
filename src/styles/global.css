@@ -98,12 +98,12 @@ body {
     gap: 0.35rem !important;
   }
 
-  /* Content area — right 60% */
+  /* Content area — start where sidebar ends (sidebar left 12px + width 35% + 8px gap) */
   #content-area {
     top: 12px !important;
     right: 12px !important;
     bottom: 12px !important;
-    left: 28% !important;
+    left: calc(35% + 20px) !important;
   }
 
   /* Home section text */

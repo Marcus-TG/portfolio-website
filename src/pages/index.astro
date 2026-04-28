@@ -3,8 +3,6 @@ import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Projects from '../components/Projects.astro';
 import Contact from '../components/Contact.astro';
-
-const sections = ['home', 'projects', 'contact'];
 ---
 
 <html lang="en">
@@ -88,13 +86,16 @@ const sections = ['home', 'projects', 'contact'];
     const sections = document.querySelectorAll<HTMLElement>('.section');
     const links = document.querySelectorAll<HTMLAnchorElement>('.nav-link');
 
-    // Fade out all sections, fade in the target
+    // Fade out all sections, fade in the target.
+    // overwrite: 'auto' kills any in-flight tween on the same target so rapid
+    // clicks don't stack and desync the visible section from the active link.
     sections.forEach(section => {
       if (section.id === id) {
         gsap.to(section, {
           opacity: 1,
           duration: DURATION,
           ease: 'power2.inOut',
+          overwrite: 'auto',
           onStart: () => section.classList.remove('pointer-events-none'),
         });
       } else {
@@ -102,6 +103,7 @@ const sections = ['home', 'projects', 'contact'];
           opacity: 0,
           duration: DURATION,
           ease: 'power2.inOut',
+          overwrite: 'auto',
           onComplete: () => section.classList.add('pointer-events-none'),
         });
       }
@@ -115,7 +117,7 @@ const sections = ['home', 'projects', 'contact'];
 
   // Background
   const bgContainer = document.getElementById('background')!;
-  new BackgroundScene(bgContainer);
+  const bgScene = new BackgroundScene(bgContainer);
 
   // Initial render — no animation, just show the right section
   function init(): void {
@@ -156,5 +158,12 @@ const sections = ['home', 'projects', 'contact'];
   });
 
   init();
-  initTitleCycler();
+  const stopTitleCycler = initTitleCycler();
+
+  // Cleanup on unload — dispose Three.js context + cancel cycler interval.
+  // Also fires for Vite HMR full reloads, preventing leaked rAF/listeners.
+  window.addEventListener('pagehide', () => {
+    stopTitleCycler();
+    bgScene.dispose();
+  });
 </script>

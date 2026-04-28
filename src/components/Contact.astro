@@ -151,6 +151,11 @@
     opacity: 1;
   }
 
+  .submit-btn:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
+
   .contact-error {
     font-size: 0.75rem;
     color: rgba(232, 232, 232, 0.4);
@@ -180,11 +185,14 @@
   @media (max-width: 768px) {
     .contact-frame {
       padding: 2rem 1rem 1.5rem 0.5rem;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .contact-content {
       padding-left: calc(7vw + 0.75rem);
       padding-right: 1rem;
+      justify-content: flex-start;
     }
 
     .contact-heading {
@@ -207,11 +215,26 @@
     .field-input {
       border-bottom-color: rgba(232, 232, 232, 0.4);
       font-size: 1rem;
+      min-height: 44px;
+      padding: 0.6rem 0;
+    }
+
+    .field-textarea {
+      min-height: 88px;
+    }
+
+    .submit-btn {
+      min-height: 44px;
+      padding: 0 0.5rem;
+      font-size: 1rem;
     }
 
     .contact-email {
       color: rgba(232, 232, 232, 0.4);
       word-break: break-all;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
     }
   }
 
@@ -231,15 +254,27 @@
   const errorEl = document.getElementById('contact-error')!;
   const confirmation = document.getElementById('contact-confirmation')!;
 
+  const submitBtn = form.querySelector<HTMLButtonElement>('.submit-btn')!;
+  let submitting = false;
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (submitting) return;
     errorEl.textContent = '';
 
     const name = (form.elements.namedItem('name') as HTMLInputElement).value.trim();
     const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
     const message = (form.elements.namedItem('message') as HTMLTextAreaElement).value.trim();
 
-    if (!name || !email || !message) return;
+    if (!name || !email || !message) {
+      errorEl.textContent = 'Please fill in all fields.';
+      return;
+    }
+
+    submitting = true;
+    submitBtn.disabled = true;
+    const originalLabel = submitBtn.textContent;
+    submitBtn.textContent = 'Sending…';
 
     try {
       const res = await fetch('https://n8n.ducksonaboat.ca/webhook/contact-form', {
@@ -269,6 +304,9 @@
       });
     } catch {
       errorEl.textContent = "Something went wrong. Try emailing directly.";
+      submitting = false;
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
     }
   });
 </script>
