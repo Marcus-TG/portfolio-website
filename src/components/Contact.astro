@@ -82,6 +82,9 @@
     letter-spacing: 0.01em;
     line-height: 1.15;
     margin: 0 0 3rem;
+    text-shadow:
+      0 0 16px var(--color-background),
+      0 0 6px var(--color-background);
   }
 
   .contact-form {
@@ -99,9 +102,12 @@
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
       'Liberation Mono', monospace;
     font-size: 0.7rem;
-    color: color-mix(in srgb, var(--color-text-primary) 55%, transparent);
+    color: color-mix(in srgb, var(--color-text-primary) 60%, transparent);
     letter-spacing: 0.05em;
     margin-bottom: 0.5rem;
+    text-shadow:
+      0 0 10px var(--color-background),
+      0 0 4px var(--color-background);
   }
 
   .field-input {
@@ -116,6 +122,9 @@
     transition: border-color 0.2s ease;
     width: 100%;
     max-width: 480px;
+    text-shadow:
+      0 0 10px var(--color-background),
+      0 0 4px var(--color-background);
   }
 
   .field-input:focus {
@@ -145,6 +154,9 @@
     cursor: pointer;
     padding: 0;
     transition: opacity 0.2s ease;
+    text-shadow:
+      0 0 10px var(--color-background),
+      0 0 4px var(--color-background);
   }
 
   .submit-btn:hover {
@@ -158,9 +170,12 @@
 
   .contact-error {
     font-size: 0.75rem;
-    color: color-mix(in srgb, var(--color-text-primary) 40%, transparent);
+    color: color-mix(in srgb, var(--color-text-primary) 60%, transparent);
     flex: 1;
     text-align: right;
+    text-shadow:
+      0 0 10px var(--color-background),
+      0 0 4px var(--color-background);
   }
 
   .contact-confirmation {
@@ -171,10 +186,13 @@
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
       'Liberation Mono', monospace;
     font-size: 0.75rem;
-    color: color-mix(in srgb, var(--color-text-primary) 35%, transparent);
+    color: color-mix(in srgb, var(--color-text-primary) 60%, transparent);
     text-decoration: none;
     margin-top: 3rem;
     transition: color 0.2s ease;
+    text-shadow:
+      0 0 10px var(--color-background),
+      0 0 4px var(--color-background);
   }
 
   .contact-email:hover {
@@ -230,7 +248,7 @@
     }
 
     .contact-email {
-      color: color-mix(in srgb, var(--color-text-primary) 40%, transparent);
+      color: color-mix(in srgb, var(--color-text-primary) 60%, transparent);
       word-break: break-all;
       min-height: 44px;
       display: inline-flex;
