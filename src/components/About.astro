@@ -38,9 +38,11 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-left: 42%;
-    padding-right: 4%;
+    align-items: flex-end;
+    padding-left: 4%;
+    padding-right: 0;
     gap: 2.5rem;
+    text-align: right;
     /* Bias the stack slightly above the vertical center */
     transform: translateY(-4%);
   }
@@ -48,7 +50,7 @@
   .about-bio {
     max-width: 480px;
     font-weight: 300;
-    font-size: 0.95rem;
+    font-size: 1.15rem;
     line-height: 1.6;
     color: var(--color-text-primary);
     opacity: 0.5;
@@ -67,15 +69,22 @@
 
   .env-row {
     display: grid;
-    grid-template-columns: 7rem 1fr;
+    grid-template-columns: auto auto;
+    gap: 1.25rem;
     align-items: baseline;
+    justify-content: end;
+  }
+
+  /* Value first, label flush to the right edge */
+  .env-row dd {
+    order: -1;
   }
 
   .env-row dt,
   .env-row dd {
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
       'Liberation Mono', monospace;
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     letter-spacing: 0.02em;
     color: var(--color-text-primary);
     margin: 0;
@@ -95,13 +104,13 @@
   .about-dotfiles {
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
       'Liberation Mono', monospace;
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     letter-spacing: 0.02em;
     color: var(--color-accent-primary);
     text-decoration: none;
     opacity: 0.85;
     transition: opacity 0.2s ease;
-    align-self: flex-start;
+    align-self: flex-end;
     text-shadow:
       0 0 10px var(--color-background),
       0 0 4px var(--color-background);
@@ -128,21 +137,21 @@
     }
 
     .about-bio {
-      font-size: 0.8rem;
+      font-size: 0.95rem;
       max-width: 100%;
     }
 
     .env-row {
-      grid-template-columns: 6rem 1fr;
+      gap: 1rem;
     }
 
     .env-row dt,
     .env-row dd {
-      font-size: 0.7rem;
+      font-size: 0.85rem;
     }
 
     .about-dotfiles {
-      font-size: 0.7rem;
+      font-size: 0.85rem;
     }
   }
 </style>
