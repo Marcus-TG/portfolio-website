@@ -19,6 +19,26 @@ import Contact from '../components/Contact.astro';
   </head>
   <body class="overflow-hidden">
 
+    <!-- Page frame — decorative border, kept above the preloader so it stays
+         constant while the dark overlay crossfades to the site -->
+    <div id="page-frame" class="fixed inset-12 border border-text-primary pointer-events-none z-[10000]"></div>
+
+    <!-- Preloader — dark full-screen overlay shown until the site is ready -->
+    <div
+      id="preloader"
+      class="fixed inset-0 z-[9999] flex items-center justify-center"
+      style="background: #000000"
+    >
+      <span
+        id="preloader-name"
+        class="whitespace-nowrap opacity-0"
+        style="font-weight: 300; font-size: clamp(2rem, 5vw, 3.5rem)"
+      ><span id="preloader-title" style="color: #ffffff">Marcus Strauss</span> <span id="preloader-portfolio" style="color: #6b6b6b; font-weight: 100; margin-left: 0.35em">Portfolio</span></span>
+    </div>
+
+    <!-- Site root — wraps all visible layers; hidden until the preloader reveals it -->
+    <div id="site-root" aria-hidden="true" style="opacity: 0; pointer-events: none">
+
     <!-- Persistent background layer — Three.js canvas will be mounted here -->
     <div id="background" class="fixed inset-0 z-0"></div>
 
@@ -27,9 +47,6 @@ import Contact from '../components/Contact.astro';
 
     <!-- Black mask outside page frame -->
     <div class="fixed inset-0 z-[2] pointer-events-none border-[3rem] border-black"></div>
-
-    <!-- Page frame — decorative border inset from all four edges -->
-    <div id="page-frame" class="fixed inset-12 border border-text-primary pointer-events-none z-50"></div>
 
     <!-- Landscape overlay — mobile only -->
     <div class="landscape-overlay">
@@ -65,6 +82,8 @@ import Contact from '../components/Contact.astro';
       <!-- Contact -->
       <Contact />
     </main>
+
+    </div><!-- /#site-root -->
 
   </body>
 </html>
@@ -157,8 +176,49 @@ import Contact from '../components/Contact.astro';
     });
   });
 
+  // Preloader — runs once per full document load (not on hash navigation).
+  // Background scene + routing init happen while the site is still hidden so the
+  // shader is already rendering and the correct section is active at reveal time.
+  const preloader = document.getElementById('preloader')!;
+  const preloaderName = document.getElementById('preloader-name')!;
+  const preloaderTitle = document.getElementById('preloader-title')!;
+  const preloaderPortfolio = document.getElementById('preloader-portfolio')!;
+  const siteRoot = document.getElementById('site-root')!;
+
   init();
-  const stopTitleCycler = initTitleCycler();
+
+  // Assigned when the site is revealed; pagehide always calls the current value.
+  let stopTitleCycler: () => void = () => {};
+
+  function reveal(): void {
+    siteRoot.style.pointerEvents = '';
+    siteRoot.removeAttribute('aria-hidden');
+    preloader.remove();
+    // Start the title cycler only now, so its first fade isn't spent hidden.
+    stopTitleCycler = initTitleCycler();
+  }
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduceMotion) {
+    siteRoot.style.opacity = '1';
+    reveal();
+  } else {
+    gsap.timeline({ onComplete: reveal })
+      .to(preloaderName, { opacity: 1, duration: 0.4 })
+      .addLabel('out', '+=0.4')
+      // Colors swap and the words fade out at the same time — the name eases to
+      // the muted grey while Portfolio eases to white, both fading away (name
+      // first, Portfolio a beat behind).
+      .to(preloaderTitle, { color: '#6b6b6b', opacity: 0, duration: 0.6 }, 'out')
+      .to(preloaderPortfolio, { color: '#ffffff', opacity: 0, duration: 0.6 }, 'out+=0.1')
+      .addLabel('reveal')
+      // Snap the site to full opacity behind the still-opaque preloader, then fade
+      // only the preloader out — avoids both layers being translucent at once
+      // (which let the white page background flash through).
+      .set(siteRoot, { opacity: 1 }, 'reveal')
+      .to(preloader, { opacity: 0, duration: 0.5 }, 'reveal');
+  }
 
   // Cleanup on unload — dispose Three.js context + cancel cycler interval.
   // Also fires for Vite HMR full reloads, preventing leaked rAF/listeners.
