@@ -268,12 +268,14 @@ const projects = [
 
 <script>
   import gsap from 'gsap';
+  import { getRevealMotion } from '../scripts/revealMotion';
 
   const section = document.getElementById('projects')!;
   const slides = section.querySelectorAll<HTMLElement>('.project-slide');
   const tagSets = section.querySelectorAll<HTMLElement>('.project-tags');
   const counterCurrent = section.querySelector('.projects-counter-current')!;
   const total = slides.length;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let current = 0;
   let animating = false;
 
@@ -295,9 +297,21 @@ const projects = [
         // Update counter at zero-opacity moment
         counterCurrent.textContent = String(current + 1).padStart(2, '0');
 
-        // Fade in new slide + tags
         slides[current].style.pointerEvents = '';
-        gsap.to([slides[current], tagSets[current]], {
+
+        // Reveal the incoming slide's title and description; fall back to a
+        // plain crossfade when the reveal module isn't available.
+        const revealMotion = reduceMotion ? undefined : getRevealMotion();
+        const fadeTargets: HTMLElement[] = [tagSets[current]];
+
+        if (revealMotion) {
+          gsap.set(slides[current], { opacity: 1 });
+          revealMotion.revealElement(slides[current]);
+        } else {
+          fadeTargets.push(slides[current]);
+        }
+
+        gsap.to(fadeTargets, {
           opacity: 1,
           duration: 0.3,
           ease: 'power2.inOut',

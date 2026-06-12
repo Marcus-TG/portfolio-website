@@ -17,6 +17,16 @@ interface ItemState {
 const REVEAL_SELECTOR = '[data-reveal]';
 const CHROME_SELECTOR = '#sidebar';
 
+export type RevealMotion = ReturnType<typeof initRevealMotion>;
+
+// Active instance, shared so component scripts (e.g. the projects slider)
+// can trigger reveals without threading the instance through the page script.
+let activeInstance: RevealMotion | undefined;
+
+export function getRevealMotion(): RevealMotion | undefined {
+  return activeInstance;
+}
+
 function getRevealTargets(scope: Document | HTMLElement): HTMLElement[] {
   return Array.from(scope.querySelectorAll<HTMLElement>(REVEAL_SELECTOR));
 }
@@ -260,24 +270,33 @@ export function initRevealMotion({ reducedMotion = false }: RevealMotionOptions 
     if (section) cleanupScope(section);
   }
 
+  function revealElement(element: HTMLElement): void {
+    revealScope(element);
+  }
+
   function showAll(): void {
     showScope(document);
   }
 
   function destroy(): void {
     cleanupScope(document);
+    if (activeInstance === api) activeInstance = undefined;
   }
 
   if (reducedMotion) showAll();
 
-  return {
+  const api = {
     prepareChrome,
     playChrome,
     prepareSection,
     playSection,
     revealSection,
     resetSection,
+    revealElement,
     showAll,
     destroy,
   };
+
+  activeInstance = api;
+  return api;
 }
