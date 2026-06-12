@@ -11,7 +11,7 @@ const links = [
 
   <!-- Identity -->
   <div class="mb-10">
-    <p class="text-text-primary text-5xl font-semibold tracking-wide whitespace-nowrap">Marcus Strauss</p>
+    <p class="text-text-primary text-5xl font-semibold tracking-wide whitespace-nowrap" data-reveal="title">Marcus Strauss</p>
     <p id="job-title" class="text-text-primary/50 text-base tracking-widest uppercase mt-2 whitespace-nowrap opacity-0">Systems Administrator</p>
   </div>
 
@@ -23,6 +23,7 @@ const links = [
           href={`#${link.id}`}
           class="nav-link block text-sm tracking-widest uppercase text-text-primary transition-colors duration-200 hover:text-accent-tertiary"
           data-section={link.id}
+          data-reveal="item"
         >
           {link.label}
         </a>

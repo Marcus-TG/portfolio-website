@@ -70,7 +70,7 @@ import Contact from '../components/Contact.astro';
         id="home"
         class="section absolute inset-0 opacity-0 pointer-events-none"
       >
-      <p class="absolute bottom-12 right-12 text-sm tracking-wide text-text-primary text-right leading-relaxed">
+      <p class="absolute bottom-12 right-12 text-sm tracking-wide text-text-primary text-right leading-relaxed" data-reveal="lines">
         I got into this because complex things didn't have to be.<br>
         A solution you can repeat is worth more than one you can't explain.<br>
         I build for the next person — even when that person is me.<br>
@@ -96,6 +96,7 @@ import Contact from '../components/Contact.astro';
   import { BackgroundScene } from '../background/BackgroundScene.js';
   import gsap from 'gsap';
   import { initTitleCycler } from '../scripts/titleCycler';
+  import { initRevealMotion } from '../scripts/revealMotion';
 
   const DURATION = 0.4;
 
@@ -119,7 +120,10 @@ import Contact from '../components/Contact.astro';
           duration: DURATION,
           ease: 'power2.inOut',
           overwrite: 'auto',
-          onStart: () => section.classList.remove('pointer-events-none'),
+          onStart: () => {
+            section.classList.remove('pointer-events-none');
+            revealMotion?.revealSection(id);
+          },
         });
       } else {
         gsap.to(section, {
@@ -188,8 +192,11 @@ import Contact from '../components/Contact.astro';
   const preloaderTitle = document.getElementById('preloader-title')!;
   const preloaderPortfolio = document.getElementById('preloader-portfolio')!;
   const siteRoot = document.getElementById('site-root')!;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let revealMotion: ReturnType<typeof initRevealMotion> | undefined;
 
   init();
+  revealMotion = initRevealMotion({ reducedMotion: reduceMotion });
 
   // Assigned when the site is revealed; pagehide always calls the current value.
   let stopTitleCycler: () => void = () => {};
@@ -198,11 +205,11 @@ import Contact from '../components/Contact.astro';
     siteRoot.style.pointerEvents = '';
     siteRoot.removeAttribute('aria-hidden');
     preloader.remove();
+    revealMotion?.revealChrome();
+    revealMotion?.revealSection(getTargetSection());
     // Start the title cycler only now, so its first fade isn't spent hidden.
     stopTitleCycler = initTitleCycler();
   }
-
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (reduceMotion) {
     siteRoot.style.opacity = '1';
@@ -227,6 +234,7 @@ import Contact from '../components/Contact.astro';
   // Cleanup on unload — dispose Three.js context + cancel cycler interval.
   // Also fires for Vite HMR full reloads, preventing leaked rAF/listeners.
   window.addEventListener('pagehide', () => {
+    revealMotion?.destroy();
     stopTitleCycler();
     bgScene.dispose();
   });

@@ -33,7 +33,7 @@ const projects = [
 >
   <div class="projects-frame">
     <!-- Counter — top left -->
-    <div class="projects-counter">
+    <div class="projects-counter" data-reveal="item">
       <span class="projects-counter-current">01</span>
       <span class="projects-counter-sep">/</span>
       <span class="projects-counter-total">04</span>
@@ -43,8 +43,8 @@ const projects = [
     <div class="projects-center">
       {projects.map((project, i) => (
         <div class="project-slide" data-index={i} style={i === 0 ? '' : 'opacity: 0; pointer-events: none;'}>
-          <h2 class="project-title">{project.title}</h2>
-          <p class="project-description">{project.description}</p>
+          <h2 class="project-title" data-reveal="title">{project.title}</h2>
+          <p class="project-description" data-reveal="lines">{project.description}</p>
         </div>
       ))}
     </div>
@@ -53,13 +53,13 @@ const projects = [
     <div class="projects-bottom">
       <!-- Nav arrows — bottom left -->
       <div class="projects-nav">
-        <button class="projects-arrow" data-dir="prev" aria-label="Previous project">
+        <button class="projects-arrow" data-dir="prev" aria-label="Previous project" data-reveal="item">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="15" y1="10" x2="5" y2="10" />
             <polyline points="10,5 5,10 10,15" />
           </svg>
         </button>
-        <button class="projects-arrow" data-dir="next" aria-label="Next project">
+        <button class="projects-arrow" data-dir="next" aria-label="Next project" data-reveal="item">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="10" x2="15" y2="10" />
             <polyline points="10,5 15,10 10,15" />
@@ -68,7 +68,7 @@ const projects = [
       </div>
 
       <!-- Tags — bottom right -->
-      <div class="projects-tags-area">
+      <div class="projects-tags-area" data-reveal="item">
         {projects.map((project, i) => (
           <div class="project-tags" data-tags-index={i} style={i === 0 ? '' : 'opacity: 0;'}>
             {project.tags.map((tag, t) => (

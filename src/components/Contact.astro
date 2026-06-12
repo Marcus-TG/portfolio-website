@@ -4,10 +4,10 @@
 >
   <div class="contact-frame">
     <div class="contact-content">
-      <h2 id="contact-heading" class="contact-heading">Let's build something.</h2>
+      <h2 id="contact-heading" class="contact-heading" data-reveal="title">Let's build something.</h2>
 
       <form id="contact-form" class="contact-form" novalidate>
-        <div class="field-group">
+        <div class="field-group" data-reveal="item">
           <label for="contact-name" class="field-label">Name</label>
           <input
             type="text"
@@ -19,7 +19,7 @@
           />
         </div>
 
-        <div class="field-group">
+        <div class="field-group" data-reveal="item">
           <label for="contact-email" class="field-label">Email</label>
           <input
             type="email"
@@ -31,7 +31,7 @@
           />
         </div>
 
-        <div class="field-group">
+        <div class="field-group" data-reveal="item">
           <label for="contact-message" class="field-label">Message</label>
           <textarea
             id="contact-message"
@@ -42,7 +42,7 @@
           ></textarea>
         </div>
 
-        <div class="submit-row">
+        <div class="submit-row" data-reveal="item">
           <span id="contact-error" class="contact-error"></span>
           <button type="submit" class="submit-btn">Send message →</button>
         </div>
@@ -52,7 +52,7 @@
         <h2 class="contact-heading">Message received. I'll be in touch.</h2>
       </div>
 
-      <a href="mailto:marcus@marcusstrauss.dev" class="contact-email">marcus@marcusstrauss.dev</a>
+      <a href="mailto:marcus@marcusstrauss.dev" class="contact-email" data-reveal="item">marcus@marcusstrauss.dev</a>
     </div>
   </div>
 </section>

@@ -17,6 +17,15 @@ body {
   margin: 0;
 }
 
+[data-reveal] {
+  visibility: hidden;
+}
+
+[data-reveal] .char,
+[data-reveal] .line {
+  will-change: transform;
+}
+
 /* ── Landscape overlay — mobile only ── */
 .landscape-overlay {
   display: none;
