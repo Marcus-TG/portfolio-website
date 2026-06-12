@@ -21,6 +21,10 @@ body {
   visibility: hidden;
 }
 
+[data-reveal].is-revealing {
+  will-change: opacity, transform;
+}
+
 [data-reveal] .char,
 [data-reveal] .line {
   will-change: transform;

@@ -33,13 +33,33 @@ function getNaturalOpacity(element: HTMLElement): number {
   return Number.isFinite(opacity) ? opacity : 1;
 }
 
+function isConcealedByAncestor(
+  element: HTMLElement,
+  scope: Document | HTMLElement,
+): boolean {
+  const boundary = scope instanceof Document ? document.body : scope;
+  let parent = element.parentElement;
+
+  while (parent && parent !== boundary) {
+    const style = window.getComputedStyle(parent);
+    if (style.display === 'none' || Number.parseFloat(style.opacity) === 0) {
+      return true;
+    }
+
+    parent = parent.parentElement;
+  }
+
+  return false;
+}
+
 export function initRevealMotion({ reducedMotion = false }: RevealMotionOptions = {}) {
   const splitTargets = new Map<HTMLElement, SplitText>();
-  const itemTweens = new Map<HTMLElement, gsap.core.Animation>();
+  const targetAnimations = new Map<HTMLElement, gsap.core.Animation>();
 
   function cleanupTarget(element: HTMLElement): void {
-    itemTweens.get(element)?.kill();
-    itemTweens.delete(element);
+    targetAnimations.get(element)?.kill();
+    targetAnimations.delete(element);
+    element.classList.remove('is-revealing');
 
     const split = splitTargets.get(element);
     if (split) {
@@ -61,29 +81,35 @@ export function initRevealMotion({ reducedMotion = false }: RevealMotionOptions 
     });
   }
 
-  function revealTitle(element: HTMLElement): void {
+  function prepareTitle(element: HTMLElement): void {
     const split = new SplitText(element, {
       type: 'words, chars',
-      autoSplit: true,
+      autoSplit: false,
       mask: 'chars',
       charsClass: 'char',
       onSplit: self => {
         gsap.set(element, { visibility: 'visible' });
-        return gsap.from(self.chars, {
+        const tween = gsap.from(self.chars, {
           duration: 1,
           yPercent: -120,
           scale: 1.2,
           stagger: 0.01,
           ease: 'expo.out',
           overwrite: true,
+          paused: true,
+          onStart: () => element.classList.add('is-revealing'),
+          onComplete: () => element.classList.remove('is-revealing'),
+          onInterrupt: () => element.classList.remove('is-revealing'),
         });
+        targetAnimations.set(element, tween);
+        return tween;
       },
     });
 
     splitTargets.set(element, split);
   }
 
-  function revealLines(element: HTMLElement): void {
+  function prepareLines(element: HTMLElement): void {
     const split = new SplitText(element, {
       type: 'lines, words',
       autoSplit: true,
@@ -91,32 +117,48 @@ export function initRevealMotion({ reducedMotion = false }: RevealMotionOptions 
       linesClass: 'line',
       onSplit: self => {
         gsap.set(element, { visibility: 'visible' });
-        return gsap.from(self.lines, {
+        const tween = gsap.from(self.lines, {
           duration: 0.9,
           yPercent: 105,
           stagger: 0.04,
           ease: 'expo.out',
           overwrite: true,
+          paused: true,
+          onStart: () => element.classList.add('is-revealing'),
+          onComplete: () => element.classList.remove('is-revealing'),
+          onInterrupt: () => element.classList.remove('is-revealing'),
         });
+        targetAnimations.set(element, tween);
+        return tween;
       },
     });
 
     splitTargets.set(element, split);
   }
 
-  function revealItems(items: HTMLElement[]): void {
+  function prepareItems(items: HTMLElement[]): void {
+    if (items.length === 0) return;
+
     const states: ItemState[] = items.map(element => ({
       element,
       opacity: getNaturalOpacity(element),
     }));
 
     const timeline = gsap.timeline({
+      paused: true,
+      onStart: () => {
+        states.forEach(({ element }) => element.classList.add('is-revealing'));
+      },
       onComplete: () => {
         states.forEach(({ element }) => {
-          itemTweens.delete(element);
+          targetAnimations.delete(element);
+          element.classList.remove('is-revealing');
           gsap.set(element, { clearProps: 'opacity,transform' });
           element.style.visibility = 'visible';
         });
+      },
+      onInterrupt: () => {
+        states.forEach(({ element }) => element.classList.remove('is-revealing'));
       },
     });
 
@@ -133,11 +175,11 @@ export function initRevealMotion({ reducedMotion = false }: RevealMotionOptions 
         },
         index * 0.08,
       );
-      itemTweens.set(element, timeline);
+      targetAnimations.set(element, timeline);
     });
   }
 
-  function revealScope(scope: Document | HTMLElement): void {
+  function prepareScope(scope: Document | HTMLElement): void {
     if (reducedMotion) {
       showScope(scope);
       return;
@@ -148,28 +190,74 @@ export function initRevealMotion({ reducedMotion = false }: RevealMotionOptions 
     const itemTargets: HTMLElement[] = [];
 
     getRevealTargets(scope).forEach(element => {
+      if (isConcealedByAncestor(element, scope)) {
+        element.style.visibility = 'visible';
+        return;
+      }
+
       const kind = getRevealKind(element);
 
       if (kind === 'title') {
-        revealTitle(element);
+        prepareTitle(element);
       } else if (kind === 'lines') {
-        revealLines(element);
+        prepareLines(element);
       } else {
         itemTargets.push(element);
       }
     });
 
-    revealItems(itemTargets);
+    prepareItems(itemTargets);
   }
 
-  function revealChrome(): void {
+  function playScope(scope: Document | HTMLElement): void {
+    if (reducedMotion) {
+      showScope(scope);
+      return;
+    }
+
+    const animations = new Set<gsap.core.Animation>();
+
+    getRevealTargets(scope).forEach(element => {
+      const animation = targetAnimations.get(element);
+      if (animation) animations.add(animation);
+    });
+
+    animations.forEach(animation => animation.restart(true));
+  }
+
+  function revealScope(scope: Document | HTMLElement): void {
+    prepareScope(scope);
+    playScope(scope);
+  }
+
+  function prepareChrome(): void {
     const chrome = document.querySelector<HTMLElement>(CHROME_SELECTOR);
-    if (chrome) revealScope(chrome);
+    if (chrome) prepareScope(chrome);
+  }
+
+  function playChrome(): void {
+    const chrome = document.querySelector<HTMLElement>(CHROME_SELECTOR);
+    if (chrome) playScope(chrome);
+  }
+
+  function prepareSection(id: string): void {
+    const section = document.getElementById(id);
+    if (section) prepareScope(section);
+  }
+
+  function playSection(id: string): void {
+    const section = document.getElementById(id);
+    if (section) playScope(section);
   }
 
   function revealSection(id: string): void {
+    prepareSection(id);
+    playSection(id);
+  }
+
+  function resetSection(id: string): void {
     const section = document.getElementById(id);
-    if (section) revealScope(section);
+    if (section) cleanupScope(section);
   }
 
   function showAll(): void {
@@ -183,8 +271,12 @@ export function initRevealMotion({ reducedMotion = false }: RevealMotionOptions 
   if (reducedMotion) showAll();
 
   return {
-    revealChrome,
+    prepareChrome,
+    playChrome,
+    prepareSection,
+    playSection,
     revealSection,
+    resetSection,
     showAll,
     destroy,
   };

@@ -115,6 +115,7 @@ import Contact from '../components/Contact.astro';
     // clicks don't stack and desync the visible section from the active link.
     sections.forEach(section => {
       if (section.id === id) {
+        revealMotion?.prepareSection(id);
         gsap.to(section, {
           opacity: 1,
           duration: DURATION,
@@ -122,7 +123,7 @@ import Contact from '../components/Contact.astro';
           overwrite: 'auto',
           onStart: () => {
             section.classList.remove('pointer-events-none');
-            revealMotion?.revealSection(id);
+            revealMotion?.playSection(id);
           },
         });
       } else {
@@ -131,7 +132,10 @@ import Contact from '../components/Contact.astro';
           duration: DURATION,
           ease: 'power2.inOut',
           overwrite: 'auto',
-          onComplete: () => section.classList.add('pointer-events-none'),
+          onComplete: () => {
+            section.classList.add('pointer-events-none');
+            revealMotion?.resetSection(section.id);
+          },
         });
       }
     });
@@ -197,6 +201,10 @@ import Contact from '../components/Contact.astro';
 
   init();
   revealMotion = initRevealMotion({ reducedMotion: reduceMotion });
+  if (!reduceMotion) {
+    revealMotion.prepareChrome();
+    revealMotion.prepareSection(getTargetSection());
+  }
 
   // Assigned when the site is revealed; pagehide always calls the current value.
   let stopTitleCycler: () => void = () => {};
@@ -205,8 +213,8 @@ import Contact from '../components/Contact.astro';
     siteRoot.style.pointerEvents = '';
     siteRoot.removeAttribute('aria-hidden');
     preloader.remove();
-    revealMotion?.revealChrome();
-    revealMotion?.revealSection(getTargetSection());
+    revealMotion?.playChrome();
+    revealMotion?.playSection(getTargetSection());
     // Start the title cycler only now, so its first fade isn't spent hidden.
     stopTitleCycler = initTitleCycler();
   }
