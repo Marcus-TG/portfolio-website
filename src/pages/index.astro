@@ -40,8 +40,9 @@ import Contact from '../components/Contact.astro';
     <!-- Site root — wraps all visible layers; hidden until the preloader reveals it -->
     <div id="site-root" aria-hidden="true" style="opacity: 0; pointer-events: none">
 
-    <!-- Persistent background layer — Three.js canvas will be mounted here -->
-    <div id="background" class="fixed inset-0 z-0"></div>
+    <!-- Persistent background layer — WebGL canvas is mounted here; the solid
+         color is the fallback when WebGL is unavailable -->
+    <div id="background" class="fixed inset-0 z-0 bg-background"></div>
 
     <!-- Scrim — subtle dark overlay for legibility over shader blooms -->
     <div class="fixed inset-0 z-[1] pointer-events-none" style="background: color-mix(in srgb, var(--color-background) 35%, transparent)"></div>
@@ -146,9 +147,15 @@ import Contact from '../components/Contact.astro';
     });
   }
 
-  // Background
+  // Background — if WebGL is unavailable (or shader setup fails), skip the
+  // scene rather than crashing the script; #background's solid color remains.
   const bgContainer = document.getElementById('background')!;
-  const bgScene = new BackgroundScene(bgContainer);
+  let bgScene: BackgroundScene | undefined;
+  try {
+    bgScene = new BackgroundScene(bgContainer);
+  } catch (err) {
+    console.warn('Background scene disabled:', err);
+  }
 
   // Initial render — no animation, just show the right section
   function init(): void {
@@ -244,6 +251,6 @@ import Contact from '../components/Contact.astro';
   window.addEventListener('pagehide', () => {
     revealMotion?.destroy();
     stopTitleCycler();
-    bgScene.dispose();
+    bgScene?.dispose();
   });
 </script>
