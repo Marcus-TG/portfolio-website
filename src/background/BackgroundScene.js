@@ -1,4 +1,3 @@
-import * as THREE from 'three';
 import noiseGlsl from './noise.glsl?raw';
 import backgroundVert from './shaders/background.vert?raw';
 import backgroundFrag from './shaders/background.frag?raw';
@@ -28,8 +27,8 @@ export class BackgroundScene {
       mouseStrength:      1.0,
     };
 
-    this._mouse     = new THREE.Vector2(0, 0);
-    this._mouseLerp = new THREE.Vector2(0, 0);
+    this._mouse     = { x: 0, y: 0 };
+    this._mouseLerp = { x: 0, y: 0 };
 
     // Desktop defaults for mobile-responsive overrides
     this._desktopDefaults = {
@@ -40,7 +39,9 @@ export class BackgroundScene {
       noiseWaveScale: this.params.noiseWaveScale,
     };
 
-    this._paused = false;
+    this._paused  = false;
+    this._elapsed = 0;
+    this._last    = performance.now();
 
     this._initRenderer();
     this._initScene();
@@ -50,23 +51,55 @@ export class BackgroundScene {
   }
 
   // ---------------------------------------------------------------------------
-  // Renderer
+  // Renderer — raw WebGL context on a sized canvas
   // ---------------------------------------------------------------------------
   _initRenderer() {
-    this.renderer = new THREE.WebGLRenderer({ antialias: false });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.container.appendChild(this.renderer.domElement);
+    this.canvas = document.createElement('canvas');
+    this.gl = this.canvas.getContext('webgl', {
+      antialias: false,
+      depth:     false,
+      stencil:   false,
+      alpha:     false,
+    });
+    if (!this.gl) {
+      throw new Error('WebGL unavailable — background disabled');
+    }
+    this._pixelRatio = Math.min(window.devicePixelRatio, 2);
+    this._setSize(window.innerWidth, window.innerHeight);
+    this.container.appendChild(this.canvas);
+  }
+
+  _setSize(w, h) {
+    this.canvas.width  = Math.floor(w * this._pixelRatio);
+    this.canvas.height = Math.floor(h * this._pixelRatio);
+    this.canvas.style.width  = `${w}px`;
+    this.canvas.style.height = `${h}px`;
+    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
   }
 
   // ---------------------------------------------------------------------------
-  // Scene — orthographic camera + full-screen plane
+  // Scene — shader program + fullscreen triangle
   // ---------------------------------------------------------------------------
   _initScene() {
-    this.scene  = new THREE.Scene();
-    this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const gl = this.gl;
 
-    const fragmentShader = noiseGlsl + '\n' + backgroundFrag;
+    const fragmentShader =
+      'precision highp float;\n' + noiseGlsl + '\n' + backgroundFrag;
+    this._program = this._createProgram(backgroundVert, fragmentShader);
+    gl.useProgram(this._program);
+
+    // Fullscreen triangle — covers the viewport with no seam; vUv is derived
+    // from clip-space position so off-screen overshoot is harmless
+    this._positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this._positionBuffer);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([-1, -1, 3, -1, -1, 3]),
+      gl.STATIC_DRAW
+    );
+    const positionLoc = gl.getAttribLocation(this._program, 'position');
+    gl.enableVertexAttribArray(positionLoc);
+    gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
 
     // 512×512 white noise texture — true Math.random(), zero spatial structure
     const grainSize = 512;
@@ -74,50 +107,59 @@ export class BackgroundScene {
     for (let i = 0; i < grainData.length; i++) {
       grainData[i] = Math.random() * 255;
     }
-    this._grainTexture = new THREE.DataTexture(
-      grainData, grainSize, grainSize, THREE.RedFormat
+    this._grainTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, this._grainTexture);
+    gl.texImage2D(
+      gl.TEXTURE_2D, 0, gl.LUMINANCE,
+      grainSize, grainSize, 0,
+      gl.LUMINANCE, gl.UNSIGNED_BYTE, grainData
     );
-    this._grainTexture.wrapS = THREE.RepeatWrapping;
-    this._grainTexture.wrapT = THREE.RepeatWrapping;
-    this._grainTexture.magFilter = THREE.NearestFilter;
-    this._grainTexture.minFilter = THREE.NearestFilter;
-    this._grainTexture.needsUpdate = true;
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 
-    this.uniforms = {
-      uTime:              { value: 0 },
-      uResolution:        { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-      uMouse:             { value: new THREE.Vector2(0, 0) },
-      uGrainTexture:      { value: this._grainTexture },
-      uNoiseScale:        { value: this.params.noiseScale },
-      uNoiseSpeed:        { value: this.params.noiseSpeed },
-      uNoiseDirection:    { value: this.params.noiseDirection },
-      uNoiseWaveSpeed:    { value: this.params.noiseWaveSpeed },
-      uNoiseWaveScale:    { value: this.params.noiseWaveScale },
-      uNoiseContrast:     { value: this.params.noiseContrast },
-      uSphereRadius:      { value: this.params.sphereRadius },
-      uSphereSoftness:    { value: this.params.sphereSoftness },
-      uSphereOffsetX:     { value: this.params.sphereOffsetX },
-      uSphereOffsetY:     { value: this.params.sphereOffsetY },
-      uLightAngle:        { value: this.params.lightAngle },
-      uLightConcentration:{ value: this.params.lightConcentration },
-      uGrainSpeed:        { value: this.params.grainSpeed },
-      uGrainSize:         { value: this.params.grainSize },
-      uMaxBrightness:     { value: this.params.maxBrightness },
-      uBaseBrightness:    { value: this.params.baseBrightness },
-      uKnee:              { value: this.params.knee },
-    };
+    const uniformNames = [
+      'uTime', 'uResolution', 'uMouse', 'uGrainTexture',
+      'uNoiseScale', 'uNoiseSpeed', 'uNoiseDirection',
+      'uNoiseWaveSpeed', 'uNoiseWaveScale', 'uNoiseContrast',
+      'uSphereRadius', 'uSphereSoftness', 'uSphereOffsetX', 'uSphereOffsetY',
+      'uLightAngle', 'uLightConcentration',
+      'uGrainSpeed', 'uGrainSize',
+      'uMaxBrightness', 'uBaseBrightness', 'uKnee',
+    ];
+    this._u = {};
+    for (const name of uniformNames) {
+      this._u[name] = gl.getUniformLocation(this._program, name);
+    }
 
-    const material = new THREE.ShaderMaterial({
-      vertexShader:   backgroundVert,
-      fragmentShader,
-      uniforms:       this.uniforms,
-      depthTest:      false,
-      depthWrite:     false,
-    });
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, this._grainTexture);
+    gl.uniform1i(this._u.uGrainTexture, 0);
+    gl.uniform2f(this._u.uResolution, window.innerWidth, window.innerHeight);
+  }
 
-    this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
-    this.scene.add(this.mesh);
-    this.clock = new THREE.Clock();
+  _createProgram(vertSource, fragSource) {
+    const gl = this.gl;
+    const program = gl.createProgram();
+    gl.attachShader(program, this._compileShader(gl.VERTEX_SHADER, vertSource));
+    gl.attachShader(program, this._compileShader(gl.FRAGMENT_SHADER, fragSource));
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      throw new Error(`Shader program link failed: ${gl.getProgramInfoLog(program)}`);
+    }
+    return program;
+  }
+
+  _compileShader(type, source) {
+    const gl = this.gl;
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      throw new Error(`Shader compile failed: ${gl.getShaderInfoLog(shader)}`);
+    }
+    return shader;
   }
 
   // ---------------------------------------------------------------------------
@@ -154,20 +196,20 @@ export class BackgroundScene {
     this._onResize = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      this.renderer.setSize(w, h);
-      this.uniforms.uResolution.value.set(w, h);
+      this._setSize(w, h);
+      this.gl.uniform2f(this._u.uResolution, w, h);
       this._applyViewportScale();
     };
 
     // Pause rAF when tab hidden — saves battery / GPU on mobile and laptops.
-    // Also reset clock delta on resume so uTime doesn't jump forward.
+    // Also reset the time base on resume so uTime doesn't jump forward.
     this._onVisibilityChange = () => {
       if (document.hidden) {
         this._paused = true;
         cancelAnimationFrame(this._rafId);
       } else if (this._paused) {
         this._paused = false;
-        this.clock.getDelta();
+        this._last = performance.now();
         this._animate();
       }
     };
@@ -183,36 +225,41 @@ export class BackgroundScene {
   _animate() {
     this._rafId = requestAnimationFrame(() => this._animate());
 
-    const elapsed = this.clock.getElapsedTime();
-    const p = this.params;
-    const s = p.mouseStrength;
+    const now = performance.now();
+    this._elapsed += (now - this._last) / 1000;
+    this._last = now;
+
+    const gl = this.gl;
+    const u  = this._u;
+    const p  = this.params;
+    const s  = p.mouseStrength;
 
     // smooth mouse follow
     this._mouseLerp.x += (this._mouse.x - this._mouseLerp.x) * 0.04;
     this._mouseLerp.y += (this._mouse.y - this._mouseLerp.y) * 0.04;
 
     // sync all uniforms from params
-    this.uniforms.uTime.value              = elapsed;
-    this.uniforms.uMouse.value.set(this._mouseLerp.x * s, this._mouseLerp.y * s);
-    this.uniforms.uNoiseScale.value        = p.noiseScale;
-    this.uniforms.uNoiseSpeed.value        = p.noiseSpeed;
-    this.uniforms.uNoiseDirection.value    = p.noiseDirection;
-    this.uniforms.uNoiseWaveSpeed.value    = p.noiseWaveSpeed;
-    this.uniforms.uNoiseWaveScale.value    = p.noiseWaveScale;
-    this.uniforms.uNoiseContrast.value     = p.noiseContrast;
-    this.uniforms.uSphereRadius.value      = p.sphereRadius;
-    this.uniforms.uSphereSoftness.value    = p.sphereSoftness;
-    this.uniforms.uSphereOffsetX.value     = p.sphereOffsetX;
-    this.uniforms.uSphereOffsetY.value     = p.sphereOffsetY;
-    this.uniforms.uLightAngle.value        = p.lightAngle;
-    this.uniforms.uLightConcentration.value= p.lightConcentration;
-    this.uniforms.uGrainSpeed.value        = p.grainSpeed;
-    this.uniforms.uGrainSize.value         = p.grainSize;
-    this.uniforms.uMaxBrightness.value     = p.maxBrightness;
-    this.uniforms.uBaseBrightness.value    = p.baseBrightness;
-    this.uniforms.uKnee.value              = p.knee;
+    gl.uniform1f(u.uTime,               this._elapsed);
+    gl.uniform2f(u.uMouse,              this._mouseLerp.x * s, this._mouseLerp.y * s);
+    gl.uniform1f(u.uNoiseScale,         p.noiseScale);
+    gl.uniform1f(u.uNoiseSpeed,         p.noiseSpeed);
+    gl.uniform1f(u.uNoiseDirection,     p.noiseDirection);
+    gl.uniform1f(u.uNoiseWaveSpeed,     p.noiseWaveSpeed);
+    gl.uniform1f(u.uNoiseWaveScale,     p.noiseWaveScale);
+    gl.uniform1f(u.uNoiseContrast,      p.noiseContrast);
+    gl.uniform1f(u.uSphereRadius,       p.sphereRadius);
+    gl.uniform1f(u.uSphereSoftness,     p.sphereSoftness);
+    gl.uniform1f(u.uSphereOffsetX,      p.sphereOffsetX);
+    gl.uniform1f(u.uSphereOffsetY,      p.sphereOffsetY);
+    gl.uniform1f(u.uLightAngle,         p.lightAngle);
+    gl.uniform1f(u.uLightConcentration, p.lightConcentration);
+    gl.uniform1f(u.uGrainSpeed,         p.grainSpeed);
+    gl.uniform1f(u.uGrainSize,          p.grainSize);
+    gl.uniform1f(u.uMaxBrightness,      p.maxBrightness);
+    gl.uniform1f(u.uBaseBrightness,     p.baseBrightness);
+    gl.uniform1f(u.uKnee,               p.knee);
 
-    this.renderer.render(this.scene, this.camera);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 
   // ---------------------------------------------------------------------------
@@ -223,10 +270,13 @@ export class BackgroundScene {
     window.removeEventListener('mousemove', this._onMouseMove);
     window.removeEventListener('resize', this._onResize);
     document.removeEventListener('visibilitychange', this._onVisibilityChange);
-    this.mesh.geometry.dispose();
-    this.mesh.material.dispose();
-    this._grainTexture.dispose();
-    this.renderer.dispose();
-    this.container.removeChild(this.renderer.domElement);
+
+    const gl = this.gl;
+    gl.deleteBuffer(this._positionBuffer);
+    gl.deleteTexture(this._grainTexture);
+    gl.deleteProgram(this._program);
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+
+    this.container.removeChild(this.canvas);
   }
 }
