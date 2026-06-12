@@ -13,16 +13,28 @@ const projects = [
     tags: ['RAG', 'Pinecone', 'Gemini', 'Python', 'n8n'],
   },
   {
-    title: 'Social Intelligence Engine',
-    description:
-      'An end-to-end competitive intelligence pipeline — scrapes social platforms via residential proxies, runs AI-driven sentiment analysis, and delivers structured executive reports on demand via webhook.',
-    tags: ['Bright Data', 'Gemini', 'Python', 'Webhooks', 'Data Engineering'],
-  },
-  {
     title: 'Private AI Inference Server',
     description:
       'A self-hosted LLM inference server running open-source models on local GPU hardware — integrated into existing reverse proxy infrastructure and exposed as a private API endpoint for automation workflows.',
     tags: ['Ollama', 'Docker', 'NGINX', 'Gemma 4', 'n8n'],
+  },
+  {
+    title: 'GitCraft',
+    description:
+      'Git-like version control for Minecraft builds — a Paper plugin that lets players commit, branch, diff, merge, and cherry-pick regions of their world, with conflict previews rendered as ghost blocks and push/pull to GitHub.',
+    tags: ['Java 21', 'Paper API', 'JGit', 'SQLite', 'WorldEdit', 'Docker'],
+  },
+  {
+    title: 'Anti-Slop',
+    description:
+      'A Mac desktop app for multi-agent AI coding — run Claude Code, Codex, and Gemini CLI side by side, stage context from files and agent output, and route it into whichever agent needs it without leaving the app.',
+    tags: ['Electron', 'TypeScript', 'node-pty', 'Vite'],
+  },
+  {
+    title: 'Editorial Photography Portfolio',
+    description:
+      'A photography-led portfolio for a corporate event photographer — scroll-driven proximity-scale galleries, in-place detail overlays with prerendered deep-links, and a warm editorial design system built entirely on CSS tokens.',
+    tags: ['Astro', 'Tailwind v4', 'GSAP', 'Lenis', 'Sharp'],
   },
 ];
 ---
@@ -36,7 +48,7 @@ const projects = [
     <div class="projects-counter" data-reveal="item">
       <span class="projects-counter-current">01</span>
       <span class="projects-counter-sep">/</span>
-      <span class="projects-counter-total">04</span>
+      <span class="projects-counter-total">{String(projects.length).padStart(2, '0')}</span>
     </div>
 
     <!-- Center — project content -->
