@@ -39,15 +39,23 @@ export class BackgroundScene {
       noiseWaveScale: this.params.noiseWaveScale,
     };
 
-    this._paused  = false;
-    this._elapsed = 0;
-    this._last    = performance.now();
+    this._paused   = false;
+    this._running  = false;
+    this._elapsed  = 0;
+    this._last     = performance.now();
+    this._lastDraw = 0;
+    // Cap the loop to ~30fps. An ambient noise field doesn't need 60, and
+    // halving the draw rate halves the per-second main-thread cost — which
+    // matters most where WebGL falls back to software rasterization.
+    this._frameInterval = 1000 / 30;
 
     this._initRenderer();
     this._initScene();
     this._applyViewportScale();
     this._initEvents();
-    this._animate();
+    // Paint a single static frame so the background is present immediately;
+    // the animation loop only begins once start() is called (post-reveal).
+    this._renderFrame();
   }
 
   // ---------------------------------------------------------------------------
@@ -64,9 +72,17 @@ export class BackgroundScene {
     if (!this.gl) {
       throw new Error('WebGL unavailable — background disabled');
     }
-    this._pixelRatio = Math.min(window.devicePixelRatio, 2);
+    this._pixelRatio = this._targetPixelRatio();
     this._setSize(window.innerWidth, window.innerHeight);
     this.container.appendChild(this.canvas);
+  }
+
+  // Render at native pixels on desktop (capped at 2×), but force 1× on phones:
+  // a full-screen fragment shader at 2× DPR is 4× the pixel work for a
+  // backdrop nobody scrutinizes pixel-for-pixel.
+  _targetPixelRatio() {
+    const isMobile = window.innerWidth < 768;
+    return isMobile ? 1 : Math.min(window.devicePixelRatio, 2);
   }
 
   _setSize(w, h) {
@@ -196,17 +212,24 @@ export class BackgroundScene {
     this._onResize = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
+      this._pixelRatio = this._targetPixelRatio();
       this._setSize(w, h);
       this.gl.uniform2f(this._u.uResolution, w, h);
       this._applyViewportScale();
+      // Repaint immediately so a paused/static background tracks the new size.
+      this._renderFrame();
     };
 
     // Pause rAF when tab hidden — saves battery / GPU on mobile and laptops.
     // Also reset the time base on resume so uTime doesn't jump forward.
+    // Guarded by _running so a static (reduced-motion) background never
+    // silently starts animating on tab focus.
     this._onVisibilityChange = () => {
       if (document.hidden) {
-        this._paused = true;
-        cancelAnimationFrame(this._rafId);
+        if (this._running) {
+          this._paused = true;
+          cancelAnimationFrame(this._rafId);
+        }
       } else if (this._paused) {
         this._paused = false;
         this._last = performance.now();
@@ -222,10 +245,32 @@ export class BackgroundScene {
   // ---------------------------------------------------------------------------
   // Animation loop
   // ---------------------------------------------------------------------------
+  // Begin the animation loop. Deferred until after the preloader reveals the
+  // site — running the (potentially software-rasterized) shader while it's
+  // hidden behind the opaque preloader only burns main-thread time during the
+  // page-load window, tanking Total Blocking Time for zero visual gain.
+  start() {
+    if (this._running) return;
+    this._running = true;
+    this._last = performance.now();
+    this._animate();
+  }
+
   _animate() {
     this._rafId = requestAnimationFrame(() => this._animate());
 
+    // Throttle draws to the target frame rate; rAF still fires at display rate
+    // but the expensive work runs only when enough time has elapsed.
     const now = performance.now();
+    if (now - this._lastDraw < this._frameInterval) return;
+    this._lastDraw = now;
+
+    this._renderFrame(now);
+  }
+
+  // Sync uniforms and draw one frame. Called both by the loop and directly for
+  // single static frames (initial paint, resize, reduced-motion).
+  _renderFrame(now = performance.now()) {
     this._elapsed += (now - this._last) / 1000;
     this._last = now;
 

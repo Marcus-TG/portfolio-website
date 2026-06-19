@@ -17,6 +17,10 @@ import Contact from '../components/Contact.astro';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <title>Marcus Strauss</title>
+    <meta
+      name="description"
+      content="Marcus Strauss — engineer in Burlington, Ontario building quiet, reliable infrastructure and the AI systems that make it smarter. Portfolio and selected projects."
+    />
   </head>
   <body class="overflow-hidden">
 
@@ -243,6 +247,11 @@ import Contact from '../components/Contact.astro';
       // only the preloader out — avoids both layers being translucent at once
       // (which let the white page background flash through).
       .set(siteRoot, { opacity: 1 }, 'reveal')
+      // Kick off the background loop here — while the preloader is still fully
+      // opaque and about to fade. The first-frame warm-up stall (the WebGL
+      // context has been idle behind the preloader) happens hidden, so motion
+      // is already running smoothly by the time the curtain lifts.
+      .call(() => bgScene?.start(), undefined, 'reveal')
       .to(preloader, { opacity: 0, duration: 0.5 }, 'reveal');
   }
 
