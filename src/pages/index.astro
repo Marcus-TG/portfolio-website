@@ -124,7 +124,9 @@ import Contact from '../components/Contact.astro';
     // clicks don't stack and desync the visible section from the active link.
     sections.forEach(section => {
       if (section.id === id) {
-        revealMotion?.prepareSection(id);
+        // The reveal animation plays once on initial load only. Section
+        // switches just show the content and crossfade it in.
+        revealMotion?.showSection(id);
         gsap.to(section, {
           opacity: 1,
           duration: DURATION,
@@ -132,7 +134,6 @@ import Contact from '../components/Contact.astro';
           overwrite: 'auto',
           onStart: () => {
             section.classList.remove('pointer-events-none');
-            revealMotion?.playSection(id);
           },
         });
       } else {

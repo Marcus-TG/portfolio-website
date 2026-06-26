@@ -270,6 +270,14 @@ export function initRevealMotion({ reducedMotion = false }: RevealMotionOptions 
     if (section) cleanupScope(section);
   }
 
+  // Make a section's content visible immediately, with no reveal animation.
+  // Used for section switches after the initial load, where we want content to
+  // simply appear (and crossfade) rather than re-running the reveal each time.
+  function showSection(id: string): void {
+    const section = document.getElementById(id);
+    if (section) showScope(section);
+  }
+
   function revealElement(element: HTMLElement): void {
     revealScope(element);
   }
@@ -292,6 +300,7 @@ export function initRevealMotion({ reducedMotion = false }: RevealMotionOptions 
     playSection,
     revealSection,
     resetSection,
+    showSection,
     revealElement,
     showAll,
     destroy,

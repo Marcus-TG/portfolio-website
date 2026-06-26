@@ -302,12 +302,10 @@ const total = String(work.length).padStart(2, '0');
 
 <script>
   import gsap from 'gsap';
-  import { getRevealMotion } from '../scripts/revealMotion';
 
   const section = document.getElementById('work')!;
   const slides = section.querySelectorAll<HTMLElement>('.work-slide');
   const total = slides.length;
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let current = 0;
   let animating = false;
 
@@ -318,7 +316,7 @@ const total = String(work.length).padStart(2, '0');
     const prev = current;
     current = next;
 
-    // Crossfade — fade out the old slide, swap, then reveal the new one.
+    // Crossfade — fade out the old slide, swap, fade in the new one.
     // Same transition shape as the Projects slider.
     gsap.to(slides[prev], {
       opacity: 0,
@@ -328,22 +326,14 @@ const total = String(work.length).padStart(2, '0');
         slides[prev].style.pointerEvents = 'none';
         slides[current].style.pointerEvents = '';
 
-        const revealMotion = reduceMotion ? undefined : getRevealMotion();
-
-        if (revealMotion) {
-          gsap.set(slides[current], { opacity: 1 });
-          revealMotion.revealElement(slides[current]);
-          animating = false;
-        } else {
-          gsap.to(slides[current], {
-            opacity: 1,
-            duration: 0.3,
-            ease: 'power2.inOut',
-            onComplete: () => {
-              animating = false;
-            },
-          });
-        }
+        gsap.to(slides[current], {
+          opacity: 1,
+          duration: 0.3,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            animating = false;
+          },
+        });
       },
     });
   }
