@@ -1,0 +1,394 @@
+---
+const work = [
+  {
+    client: 'Rachel Long — Saros Creative',
+    description:
+      'Warm, editorial event photography portfolio with scroll-driven proximity-scale galleries and an in-place full-viewport detail view.',
+    tags: ['Astro', 'GSAP', 'Lenis', 'Tailwind'],
+    url: 'https://saroscreative.ca',
+    image: '/images/saros-creative.png',
+  },
+  {
+    client: 'Luke Chin Photography',
+    description:
+      'Minimal, image-first portfolio with a single-file vanilla JS gallery engine, Keystatic CMS, and History-API SPA routing.',
+    tags: ['Astro', 'Keystatic', 'Cloudflare Workers', 'Tailwind'],
+    url: 'https://luke-chin-website.marcus-strauss.workers.dev',
+    image: '/images/luke-chin.png',
+  },
+];
+
+const total = String(work.length).padStart(2, '0');
+---
+
+<section
+  id="work"
+  class="section absolute inset-0 opacity-0 pointer-events-none"
+>
+  <div class="work-frame">
+    <!-- Stage — thumbnail + details, vertically centered -->
+    <div class="work-stage">
+      {work.map((entry, i) => (
+        <div class="work-slide" data-index={i} style={i === 0 ? '' : 'opacity: 0; pointer-events: none;'}>
+          <!-- Center — framed screenshot -->
+          <div class="work-thumb" data-reveal="item">
+            <img src={entry.image} alt={`Screenshot of ${entry.client}`} loading="lazy" />
+            <a
+              class="work-thumb-overlay"
+              href={entry.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>Visit site &rarr;</span>
+            </a>
+          </div>
+
+          <!-- Right — details -->
+          <div class="work-details">
+            <div class="work-counter" data-reveal="item">
+              <span>{String(i + 1).padStart(2, '0')}</span>
+              <span class="work-counter-sep">/</span>
+              <span>{total}</span>
+            </div>
+            <h2 class="work-client" data-reveal="title">{entry.client}</h2>
+            <p class="work-description" data-reveal="lines">{entry.description}</p>
+            <div class="work-tags" data-reveal="item">
+              {entry.tags.map(tag => <span class="work-tag">{tag}</span>)}
+            </div>
+            <a
+              class="work-visit"
+              href={entry.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-reveal="item"
+            >Visit site &rarr;</a>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Bottom bar — nav arrows, bottom left -->
+    <div class="work-bottom">
+      <div class="work-nav">
+        <button class="work-arrow" data-dir="prev" aria-label="Previous project" data-reveal="item">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="15" y1="10" x2="5" y2="10" />
+            <polyline points="10,5 5,10 10,15" />
+          </svg>
+        </button>
+        <button class="work-arrow" data-dir="next" aria-label="Next project" data-reveal="item">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="10" x2="15" y2="10" />
+            <polyline points="10,5 15,10 10,15" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .work-frame {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 3rem 3rem 2.5rem 3rem;
+  }
+
+  /* Stage — holds the absolutely-positioned slides, vertically centered */
+  .work-stage {
+    flex: 1;
+    position: relative;
+  }
+
+  .work-slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4rem;
+  }
+
+  /* Center — framed screenshot, ~40% of viewport width */
+  .work-thumb {
+    position: relative;
+    width: 40vw;
+    flex-shrink: 0;
+    border: 1px solid var(--color-surface-bright);
+    line-height: 0;
+  }
+
+  .work-thumb img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Hover overlay — subtle scrim with a "Visit site" link */
+  .work-thumb-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--color-background) 55%, transparent);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    text-decoration: none;
+  }
+
+  .work-thumb-overlay span {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+      'Liberation Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    color: var(--color-accent-primary);
+  }
+
+  .work-thumb:hover .work-thumb-overlay {
+    opacity: 1;
+  }
+
+  /* Right — details, rightmost ~30% */
+  .work-details {
+    width: 26%;
+    min-width: 240px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .work-counter {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+      'Liberation Mono', monospace;
+    font-size: 0.75rem;
+    color: #444444;
+    letter-spacing: 0.05em;
+    user-select: none;
+  }
+
+  .work-counter-sep {
+    margin-inline: 0.35em;
+  }
+
+  .work-client {
+    font-size: clamp(1.6rem, 2.6vw, 2.5rem);
+    font-weight: 300;
+    color: var(--color-text-primary);
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    margin: 0.75rem 0 0;
+    text-shadow:
+      0 0 16px var(--color-background),
+      0 0 6px var(--color-background);
+  }
+
+  .work-description {
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: color-mix(in srgb, var(--color-text-primary) 50%, transparent);
+    line-height: 1.6;
+    margin: 0.9rem 0 0;
+    text-shadow:
+      0 0 10px var(--color-background),
+      0 0 4px var(--color-background);
+  }
+
+  .work-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    margin-top: 1.1rem;
+  }
+
+  .work-tag {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+      'Liberation Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--color-accent-primary);
+    opacity: 0.6;
+    letter-spacing: 0.03em;
+  }
+
+  .work-visit {
+    align-self: flex-start;
+    margin-top: 1.4rem;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+      'Liberation Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--color-accent-primary);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .work-visit:hover {
+    opacity: 0.7;
+  }
+
+  /* Bottom bar — nav arrows, bottom left */
+  .work-bottom {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .work-nav {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .work-arrow {
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    color: color-mix(in srgb, var(--color-text-primary) 40%, transparent);
+    cursor: pointer;
+    transition: color 0.2s ease;
+    line-height: 0;
+  }
+
+  .work-arrow:hover {
+    color: var(--color-text-primary);
+  }
+
+  /* ── Mobile (≤768px) — stack thumbnail above details ── */
+  @media (max-width: 768px) {
+    .work-frame {
+      padding: 2rem 1rem 1.5rem 0.75rem;
+      touch-action: pan-y;
+    }
+
+    .work-slide {
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      gap: 1.25rem;
+    }
+
+    .work-thumb {
+      width: 100%;
+    }
+
+    .work-details {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .work-client {
+      font-size: clamp(1.4rem, 5vw, 1.9rem);
+    }
+
+    .work-description {
+      font-size: 0.75rem;
+    }
+
+    .work-counter {
+      font-size: 0.65rem;
+    }
+
+    .work-tag {
+      font-size: 0.65rem;
+    }
+
+    /* Overlay reads on touch where there's no hover — keep it faintly visible */
+    .work-nav {
+      position: relative;
+      z-index: 1;
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { getRevealMotion } from '../scripts/revealMotion';
+
+  const section = document.getElementById('work')!;
+  const slides = section.querySelectorAll<HTMLElement>('.work-slide');
+  const total = slides.length;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let current = 0;
+  let animating = false;
+
+  function goTo(next: number) {
+    if (animating || next === current) return;
+    animating = true;
+
+    const prev = current;
+    current = next;
+
+    // Crossfade — fade out the old slide, swap, then reveal the new one.
+    // Same transition shape as the Projects slider.
+    gsap.to(slides[prev], {
+      opacity: 0,
+      duration: 0.3,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        slides[prev].style.pointerEvents = 'none';
+        slides[current].style.pointerEvents = '';
+
+        const revealMotion = reduceMotion ? undefined : getRevealMotion();
+
+        if (revealMotion) {
+          gsap.set(slides[current], { opacity: 1 });
+          revealMotion.revealElement(slides[current]);
+          animating = false;
+        } else {
+          gsap.to(slides[current], {
+            opacity: 1,
+            duration: 0.3,
+            ease: 'power2.inOut',
+            onComplete: () => {
+              animating = false;
+            },
+          });
+        }
+      },
+    });
+  }
+
+  // Arrow buttons
+  section.querySelectorAll<HTMLButtonElement>('.work-arrow').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dir = btn.dataset.dir;
+      if (dir === 'next') goTo((current + 1) % total);
+      else goTo((current - 1 + total) % total);
+    });
+  });
+
+  // Keyboard arrows — only when the work section is visible
+  document.addEventListener('keydown', e => {
+    if (section.classList.contains('pointer-events-none')) return;
+    if (e.key === 'ArrowRight') goTo((current + 1) % total);
+    else if (e.key === 'ArrowLeft') goTo((current - 1 + total) % total);
+  });
+
+  // Scroll wheel navigation
+  section.addEventListener('wheel', (e) => {
+    if (animating) return;
+    if (Math.abs(e.deltaY) < 30) return;
+    e.preventDefault();
+    if (e.deltaY > 0) goTo((current + 1) % total);
+    else goTo((current - 1 + total) % total);
+  }, { passive: false });
+
+  // Touch swipe navigation
+  const swipeTarget = section.querySelector<HTMLElement>('.work-frame')!;
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  swipeTarget.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].clientX;
+    touchStartY = e.changedTouches[0].clientY;
+  }, { passive: true });
+
+  swipeTarget.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+    if (Math.abs(dx) > 50 && dy < 75) {
+      if (dx < 0) goTo((current + 1) % total);
+      else goTo((current - 1 + total) % total);
+    }
+  }, { passive: true });
+</script>
