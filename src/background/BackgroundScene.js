@@ -44,12 +44,14 @@ export class BackgroundScene {
     this._elapsed  = 0;
     this._last     = performance.now();
     this._lastDraw = 0;
-    // Cap the loop to ~30fps. An ambient noise field doesn't need 60, and
-    // halving the draw rate halves the per-second main-thread cost — which
-    // matters most where WebGL falls back to software rasterization.
-    this._frameInterval = 1000 / 30;
 
     this._initRenderer();
+    // Cap to ~30fps only where WebGL falls back to software rasterization —
+    // there the per-pixel cost lands on the CPU and halving the draw rate
+    // matters. On real GPUs the scene renders in well under a frame, and the
+    // noise field scrolls fast enough that capping reads as judder, so draw
+    // at display rate (interval 0 = uncapped).
+    this._frameInterval = this._isSoftwareRenderer() ? 1000 / 30 : 0;
     this._initScene();
     this._applyViewportScale();
     this._initEvents();
@@ -75,6 +77,17 @@ export class BackgroundScene {
     this._pixelRatio = this._targetPixelRatio();
     this._setSize(window.innerWidth, window.innerHeight);
     this.container.appendChild(this.canvas);
+  }
+
+  // Detect software rasterizers (SwiftShader, llvmpipe, …) so the animation
+  // loop can throttle where fragment work runs on the CPU.
+  _isSoftwareRenderer() {
+    const gl  = this.gl;
+    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    const renderer = ext
+      ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)
+      : gl.getParameter(gl.RENDERER);
+    return /swiftshader|llvmpipe|softpipe|software/i.test(renderer || '');
   }
 
   // Render at native pixels on desktop (capped at 2×), but force 1× on phones:
@@ -259,11 +272,17 @@ export class BackgroundScene {
   _animate() {
     this._rafId = requestAnimationFrame(() => this._animate());
 
-    // Throttle draws to the target frame rate; rAF still fires at display rate
-    // but the expensive work runs only when enough time has elapsed.
+    // Throttle draws to the target frame rate (software rendering only); rAF
+    // still fires at display rate but the expensive work runs only when
+    // enough time has elapsed.
     const now = performance.now();
-    if (now - this._lastDraw < this._frameInterval) return;
-    this._lastDraw = now;
+    if (this._frameInterval > 0) {
+      if (now - this._lastDraw < this._frameInterval) return;
+      // Carry the remainder instead of resetting to `now`: rAF ticks land
+      // just shy of exact interval multiples, and resetting would push every
+      // draw a full tick late, turning a 30fps cap into an uneven ~20fps.
+      this._lastDraw = now - ((now - this._lastDraw) % this._frameInterval);
+    }
 
     this._renderFrame(now);
   }
