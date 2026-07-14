@@ -1,22 +1,16 @@
 ---
 const projects = [
   {
-    title: 'Infrastructure Stack',
+    title: 'Sundial',
     description:
-      'A two-year evolution in self-hosted infrastructure — dual-WAN load balancing, 10Gb networking fabric, VLAN segmentation, and containerized service orchestration across dedicated hardware.',
-    tags: ['UniFi', 'TrueNAS', 'Docker', 'NGINX', 'Cloudflare', 'ZFS'],
+      'A geospatial lead-generation pipeline that turns a neighbourhood polygon into a qualified lead list — open-data address ingestion, Gemini-classified satellite imagery, targeted Solar API enrichment, and a self-contained interactive lead map, with a calibration harness that scores the classifier against human labels.',
+    tags: ['Python', 'Gemini', 'Google Solar API', 'Static Maps', 'GeoJSON'],
   },
   {
     title: 'AI Policy Assistant',
     description:
       'A RAG pipeline that monitors corporate documentation in real-time, vectorizes it on change, and surfaces accurate answers through a conversational interface — with strict source-only guardrails.',
     tags: ['RAG', 'Pinecone', 'Gemini', 'Python', 'n8n'],
-  },
-  {
-    title: 'Private AI Inference Server',
-    description:
-      'A self-hosted LLM inference server running open-source models on local GPU hardware — integrated into existing reverse proxy infrastructure and exposed as a private API endpoint for automation workflows.',
-    tags: ['Ollama', 'Docker', 'NGINX', 'Gemma 4', 'n8n'],
   },
   {
     title: 'GitCraft',
@@ -31,22 +25,46 @@ const projects = [
     tags: ['Electron', 'TypeScript', 'node-pty', 'Vite'],
   },
   {
-    title: 'Sundial',
+    title: 'Content Pipeline',
     description:
-      'A geospatial lead-generation pipeline that turns a neighbourhood polygon into a qualified lead list — open-data address ingestion, Gemini-classified satellite imagery, targeted Solar API enrichment, and a self-contained interactive lead map, with a calibration harness that scores the classifier against human labels.',
-    tags: ['Python', 'Gemini', 'Google Solar API', 'Static Maps', 'GeoJSON'],
+      'A generator–evaluator loop that drafts blog and LinkedIn content — mechanical checks run in code, a fresh-context LLM judge scores each draft against a rubric, failures feed back verbatim for retry, and code-enforced approval gates stand between case studies and the publish button.',
+    tags: ['Python', 'Claude', 'LLM Judge', 'n8n'],
   },
   {
-    title: 'Market Auditor',
+    title: 'Auto-Apply Bot',
     description:
-      'A data pipeline that turns fragmented social media activity into structured competitive intelligence — proxy-based scraping through headless browsers, Gemini-driven summarization and sentiment grading, and webhook-triggered on-demand reports.',
-    tags: ['Bright Data', 'Gemini', 'Headless Browsing', 'Webhooks'],
+      'An AI job-search agent that discovers postings from ATS APIs, scores fit with a prefilter-plus-Claude rubric, and tailors applications from a pre-approved bullet bank — the model never invents resume claims — with every high-fit role gated behind human approval before submission.',
+    tags: ['TypeScript', 'Claude API', 'Playwright', 'SQLite', 'n8n'],
+  },
+  {
+    title: 'Ads & Analytics Agent',
+    description:
+      'An agentic workspace that lets Claude reason over live Google Ads and GA4 data — read-only MCP servers for campaign performance, conversions, and traffic reporting across agency client accounts, plus keyword research and RSA copy generation tools. No write access by design: the agent recommends, a human ships.',
+    tags: ['Claude Code', 'MCP', 'Google Ads API', 'GA4', 'Python'],
+  },
+  {
+    title: 'Infrastructure Stack',
+    description:
+      'A two-year evolution in self-hosted infrastructure — dual-WAN load balancing, 10Gb networking fabric, VLAN segmentation, and containerized service orchestration across dedicated hardware.',
+    tags: ['UniFi', 'TrueNAS', 'Docker', 'NGINX', 'Cloudflare', 'ZFS'],
   },
   {
     title: 'Iso City',
     description:
       'An isometric city-builder and front-line warfare prototype — tick-based production chains, three-tier Anno-style truck logistics, residence needs and upgrades, attrition combat with retreat and encirclement, and a scripted enemy AI.',
     tags: ['TypeScript', 'PixiJS', 'Vite'],
+  },
+  {
+    title: 'Private AI Inference Server',
+    description:
+      'A self-hosted LLM inference server running open-source models on local GPU hardware — integrated into existing reverse proxy infrastructure and exposed as a private API endpoint for automation workflows.',
+    tags: ['Ollama', 'Docker', 'NGINX', 'Gemma 4', 'n8n'],
+  },
+  {
+    title: 'Market Auditor',
+    description:
+      'A data pipeline that turns fragmented social media activity into structured competitive intelligence — proxy-based scraping through headless browsers, Gemini-driven summarization and sentiment grading, and webhook-triggered on-demand reports.',
+    tags: ['Bright Data', 'Gemini', 'Headless Browsing', 'Webhooks'],
   },
 ];
 ---
