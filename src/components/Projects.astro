@@ -15,8 +15,8 @@ const projects = [
   {
     title: 'GitCraft',
     description:
-      'A Paper plugin that brings Git-like version control to Minecraft builds. Players commit, branch, diff, merge, and cherry-pick regions of their world, with conflict previews rendered as ghost blocks and push/pull to GitHub.',
-    tags: ['Java 21', 'Paper API', 'JGit', 'SQLite', 'WorldEdit', 'Docker'],
+      'Git-like version control for Minecraft builds, shipped as both a Fabric mod and a Paper plugin. Selected regions become commits backed by Sponge schematic snapshots, so players can log, branch, checkout, reset, diff, merge, cherry-pick, and stash their world, with conflict previews rendered as ghost blocks (display entities on Paper, per-player fake entity packets on Fabric, so vanilla clients work). A platform-agnostic core module holds the commit DAG, SQLite persistence, and JGit layer behind a single Platform interface, and GitHub OAuth device-flow login unlocks remotes, push, pull, and clone with no native git on the server.',
+    tags: ['Java 21', 'Fabric', 'Paper API', 'JGit', 'SQLite', 'WorldEdit', 'GitHub OAuth'],
   },
   {
     title: 'Anti-Slop',
