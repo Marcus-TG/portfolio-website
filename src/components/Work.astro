@@ -37,7 +37,7 @@ const total = String(work.length).padStart(2, '0');
     <!-- Stage — thumbnail + details, vertically centered -->
     <div class="work-stage">
       {work.map((entry, i) => (
-        <div class="work-slide" data-index={i} style={i === 0 ? '' : 'opacity: 0; pointer-events: none;'}>
+        <div class="work-slide" data-index={i} inert={i !== 0} style={i === 0 ? '' : 'opacity: 0; pointer-events: none;'}>
           <!-- Center — framed screenshot -->
           <div class="work-thumb" data-reveal="item">
             <img src={entry.image} alt={`Screenshot of ${entry.client}`} loading="lazy" />
@@ -332,7 +332,9 @@ const total = String(work.length).padStart(2, '0');
       ease: 'power2.inOut',
       onComplete: () => {
         slides[prev].style.pointerEvents = 'none';
+        slides[prev].setAttribute('inert', '');
         slides[current].style.pointerEvents = '';
+        slides[current].removeAttribute('inert');
 
         gsap.to(slides[current], {
           opacity: 1,

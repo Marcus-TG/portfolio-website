@@ -134,6 +134,7 @@ import Contact from '../components/Contact.astro';
           overwrite: 'auto',
           onStart: () => {
             section.classList.remove('pointer-events-none');
+            section.removeAttribute('inert');
           },
         });
       } else {
@@ -144,6 +145,7 @@ import Contact from '../components/Contact.astro';
           overwrite: 'auto',
           onComplete: () => {
             section.classList.add('pointer-events-none');
+            section.setAttribute('inert', '');
             revealMotion?.resetSection(section.id);
           },
         });
@@ -169,6 +171,15 @@ import Contact from '../components/Contact.astro';
   // Initial render — no animation, just show the right section
   function init(): void {
     const target = getTargetSection();
+
+    // Inactive sections stay in the DOM at opacity 0, which hides them visually
+    // but not from the keyboard or a screen reader. `inert` is what actually
+    // takes them out of the tab order and the accessibility tree; the
+    // pointer-events-none class stays because the sliders read it to tell
+    // whether they're the active section.
+    document.querySelectorAll<HTMLElement>('.section').forEach(section => {
+      section.toggleAttribute('inert', section.id !== target);
+    });
 
     // Snap the target section visible immediately
     const targetEl = document.getElementById(target);
