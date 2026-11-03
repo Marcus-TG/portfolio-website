@@ -1,6 +1,12 @@
 ---
 const projects = [
   {
+    title: '177B on One GPU',
+    description:
+      'A 177-billion-parameter mixture-of-experts language model served from a single 24 GB consumer GPU. A three-tier memory design keeps the hot expert shard in VRAM, the full expert pool in system RAM, and a 51-billion-parameter n-gram lookup table on disk, so only about 3B parameters do arithmetic per token out of 177B resident. A multi-token-prediction draft head sustains roughly 60% speculative acceptance for 120 tokens/sec, exposed over an OpenAI-compatible API to a self-hosted assistant. The same GPU hands off to a Windows VM and back through vfio-pci passthrough, under a libvirt hook that tears down and restores the host CUDA stack around each handover.',
+    tags: ['Strata', 'Qwen3.8', 'CUDA', 'vfio-pci', 'libvirt', 'systemd'],
+  },
+  {
     title: 'Sundial',
     description:
       'A geospatial lead-generation pipeline that turns a neighbourhood polygon into a qualified lead list: open-data address ingestion, Gemini-classified satellite imagery, targeted Solar API enrichment, and a self-contained interactive lead map. A built-in calibration harness scores the classifier against human labels.',
@@ -53,12 +59,6 @@ const projects = [
     description:
       'An isometric city-builder and front-line warfare prototype with tick-based production chains, three-tier Anno-style truck logistics, residence needs and upgrades, attrition combat with retreat and encirclement, and a scripted enemy AI.',
     tags: ['TypeScript', 'PixiJS', 'Vite'],
-  },
-  {
-    title: 'Private AI Inference Server',
-    description:
-      'A self-hosted LLM inference server running open-source models on local GPU hardware, integrated into existing reverse proxy infrastructure and exposed as a private API endpoint for automation workflows.',
-    tags: ['Ollama', 'Docker', 'NGINX', 'Gemma 4', 'n8n'],
   },
   {
     title: 'Market Auditor',
